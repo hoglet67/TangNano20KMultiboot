@@ -1,0 +1,12 @@
+[submodule "BeebFpga"]
+	path = BeebFpga
+	url = https://github.com/hoglet67/BeebFpga.git
+	branch = dev
+[submodule "ElectronFpga"]
+	path = ElectronFpga
+	url = https://github.com/hoglet67/ElectronFpga.git
+	branch = dev
+[submodule "AtomFpga"]
+	path = AtomFpga
+	url = https://github.com/hoglet67/AtomFpga.git
+	branch = master
