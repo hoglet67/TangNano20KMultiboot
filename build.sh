@@ -76,6 +76,9 @@ do
     # Patch in the next SPI address
     sed -i "s/\(MULTIBOOT_SPI_FLASH_ADDRESS.*:\).*/\1 \"${nextaddr}\",/" impl/tang20k_process_config.json
 
+    # Patch in a 25MHz SPI clock speed
+    sed -i "s/\(DOWNLOAD_SPEED.*:\).*/\1 \"250\/10\",/" impl/tang20k_process_config.json
+
     # Patch in the core ID
     sed  -i "s/\(G_CORE_ID.*:=\).*/\1 ${core};/" src/board_config_pack.vhd
 
