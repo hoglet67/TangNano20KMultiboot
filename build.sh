@@ -34,6 +34,33 @@ rm -rf build/*
 # Set build to the absolute path of the build directory
 build=`pwd`/build
 
+######################################################
+# Build ROM images
+######################################################
+
+# 512KB
+cd BeebFpga/roms
+./make_rom_image_tangnano.sh
+cp tmp/tang_image_combined_MMFS.bin ${build}/rom_image_beeb.bin
+cd -
+
+# 256KB
+cd AtomFpga/roms
+./make_ramrom_tang_image.sh
+cp 16K_avr.bin ${build}/rom_image_atom.bin
+cd -
+
+# 256KB
+cd ElectronFpga/roms
+./make_rom_image.sh
+cp tmp/rom_image.bin ${build}/rom_image_electron.bin
+cd -
+
+######################################################
+# Build Cores
+######################################################
+
+
 #if [[ 0 == 1 ]]; then
 
 for core in 0 1 2 3
@@ -94,26 +121,6 @@ EOF
 done
 
 #fi
-
-# Build ROM images
-
-# 512KB
-cd BeebFpga/roms
-./make_rom_image_tangnano.sh
-cp tmp/tang_image_combined_MMFS.bin ${build}/rom_image_beeb.bin
-cd -
-
-# 256KB
-cd AtomFpga/roms
-./make_ramrom_tang_image.sh
-cp 16K_avr.bin ${build}/rom_image_atom.bin
-cd -
-
-# 256KB
-cd ElectronFpga/roms
-./make_rom_image.sh
-cp tmp/rom_image.bin ${build}/rom_image_electron.bin
-cd -
 
 cd build
 chmod 644 *.bin
