@@ -29,10 +29,12 @@ nextaddrs=(
     )
 
 rm -rf build
-mkdir build
+mkdir -p build
 
 # Set build to the absolute path of the build directory
 build=`pwd`/build
+
+#if [[ 0 == 1 ]]; then
 
 for core in 0 1 2 3
 do
@@ -79,29 +81,53 @@ do
     run close
 EOF
 
-    # Copy the bin file
+    # Copy the bin and fs files
     cp impl/pnr/tang20k.bin ${build}/${core}.bin
+    cp impl/pnr/tang20k.fs ${build}/${core}.fs
 
     # Revert any local changes
+    git checkout .
     git clean -f
 
     cd -
 done
 
+#fi
+
 # Build ROM images
 
+# 512KB
 cd BeebFpga/roms
 ./make_rom_image_tangnano.sh
 cp tmp/tang_image_combined_MMFS.bin ${build}/rom_image_beeb.bin
 cd -
 
+# 256KB
 cd AtomFpga/roms
 ./make_ramrom_tang_image.sh
 cp 16K_avr.bin ${build}/rom_image_atom.bin
+cd -
 
+# 256KB
 cd ElectronFpga/roms
 ./make_rom_image.sh
 cp tmp/rom_image.bin ${build}/rom_image_electron.bin
 cd -
 
 cd build
+chmod 644 *.bin
+truncate -s 1M 0.bin
+truncate -s 1M 1.bin
+truncate -s 1M 2.bin
+truncate -s 1M 3.bin
+truncate -s 1M  pad1
+truncate -s 64K pad2
+truncate -s 176K pad3
+
+cat 0.bin 1.bin 2.bin 3.bin > multiboot_cores.bin
+cat multiboot_cores.bin pad1 rom_image_beeb.bin pad2 rom_image_atom.bin pad3 rom_image_electron.bin > multiboot_cores_and_roms.bin
+
+rm -f pad1 pad2 pad3
+cd -
+
+ls -l build
