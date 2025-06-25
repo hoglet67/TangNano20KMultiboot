@@ -113,8 +113,9 @@ do
 EOF
 
     # Copy the bin and fs files
-    cp impl/pnr/tang20k.bin ${build}/${core}.bin
     cp impl/pnr/tang20k.fs ${build}/${core}.fs
+    cp impl/pnr/tang20k.bin ${build}/${core}.bin
+    truncate -s 1M ${build}/${core}.bin
 
     # Revert any local changes
     git checkout .
@@ -127,10 +128,6 @@ done
 
 cd build
 chmod 644 *.bin
-truncate -s 1M 0.bin
-truncate -s 1M 1.bin
-truncate -s 1M 2.bin
-truncate -s 1M 3.bin
 truncate -s 1M  pad1
 truncate -s 64K pad2
 truncate -s 176K pad3
