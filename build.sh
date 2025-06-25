@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 flavour=tang20k_nodebugger_pitube
 
@@ -28,8 +28,8 @@ nextaddrs=(
     00000000
     )
 
-rm -rf build
 mkdir -p build
+rm -rf build/*
 
 # Set build to the absolute path of the build directory
 build=`pwd`/build
@@ -60,6 +60,7 @@ do
     # For the Beeb core, disable the beeb personality
     if [ "$core" == "1" ]; then
         sed -i "s/\(G_CONFIG_MASTER.*:=\).*/\1 false;/" src/board_config_pack.vhd
+        sed -i "s/set_false_path.*m128_mode.*//" src/board_timings.sdc
     fi
 
     echo "Local changes:"
