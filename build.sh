@@ -1,11 +1,16 @@
-#!/bin/bash -e
-
-flavour=tang20k_nodebugger_vga
+#!/bin/bash
 
 # Core 0 - BeebFpga (Master)
 # Core 1 - BeebFpga (Beeb)
 # Core 2 - ElectronFpga
 # Core 3 - AtomFPGA
+
+flavours=(
+    tang20k_nodebugger_pitube
+    tang20k_nodebugger_vga
+    tang20k_debugger_pitube
+    tang20k_debugger_vga
+)
 
 names=(
     Master
@@ -35,9 +40,27 @@ nextaddrs=(
     00000000
 )
 
-# Before doing anthing, check gw_sh is available
+# Allow flavour to be passed in as a positional argument
+if [[ "$1" != "" ]]; then
+    flavour=$1
+else
+    flavour=tang20k_nodebugger_pitube
+fi
 
-type gw_sh >/dev/null 2>&1 || { echo >&2 "Gowin gw_sh not found on the PATH. Aborting."; exit 1; }
+if [[ ${flavours[@]} =~ "${flavour}" ]]; then
+    echo "Building multiboot core for flavour: ${flavour}"
+else
+    echo "Unknown flavour: ${flavour}, supported flavours are:" >&2
+    echo "${flavours[@]}" | tr " " "\n" >&2
+    exit 1
+fi
+
+# Before doing anthing, check gw_sh is available
+type gw_sh >/dev/null 2>&1
+if [[ "$?" != "0" ]]; then
+    echo "Gowin gw_sh not found on the PATH" >&2
+    exit 1
+fi
 
 build=build/${flavour}
 
@@ -83,7 +106,7 @@ do
     root=${roots[$core]}
     target=${root}/${build}/${core}
 
-    echo "Core ${core} = ${name}; flavour = ${flavour}"
+    echo "Core ${core} = ${name}"
 
     cd ${dir}/${flavour}
 
@@ -150,12 +173,18 @@ done
 # Build the final multiboot images
 
 cd build
-truncate -s 1M  pad1
-truncate -s 64K pad2
-truncate -s 176K pad3
+truncate -s 64K  pad1
+truncate -s 176K pad2
+truncate -s 1M   pad3
 
-cat 0.bin 1.bin 2.bin 3.bin > multiboot_cores.bin
-cat multiboot_cores.bin pad1 rom_image_beeb.bin pad2 rom_image_atom.bin pad3 rom_image_electron.bin > multiboot_cores_and_roms.bin
+cat 0.bin 1.bin 2.bin 3.bin \
+    > multiboot_cores.bin
+
+cat rom_image_beeb.bin pad1 rom_image_atom.bin pad2 rom_image_electron.bin \
+    > multiboot_roms.bin
+
+cat multiboot_cores.bin pad3 multiboot_roms \
+    > multiboot_cores_and_roms.bin
 
 rm -f pad1 pad2 pad3
 cd -
