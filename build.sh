@@ -35,6 +35,10 @@ nextaddrs=(
     00000000
 )
 
+# Before doing anthing, check gw_sh is available
+
+type gw_sh >/dev/null 2>&1 || { echo >&2 "Gowin gw_sh not found on the PATH. Aborting."; exit 1; }
+
 mkdir -p build
 rm -rf build/*
 
@@ -115,7 +119,7 @@ do
 
     # Clean the pnr directory to make sure no stale files
     rm -rf impl/pnr
-    
+
     # Build the project
     gw_sh >${build}/${core}.log 2>&1 <<EOF
     open_project tang20k.gprj
@@ -138,7 +142,7 @@ EOF
     echo
 
     cd ${root_path}
-    
+
 done
 
 # Build the final multiboot images
