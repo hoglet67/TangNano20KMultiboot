@@ -47,21 +47,21 @@ build=`pwd`/build
 
 # 512KB
 cd BeebFpga/roms
-./make_rom_image_tangnano.sh
+./make_rom_image_tangnano.sh >> ${build}/roms.log
 cp tmp/tang_image_combined_MMFS.bin ${build}/rom_image_beeb.bin
 git clean -f -q
 cd ../..
 
 # 256KB
 cd AtomFpga/roms
-./make_ramrom_tang_image.sh
+./make_ramrom_tang_image.sh >> ${build}/roms.log
 cp 16K_avr.bin ${build}/rom_image_atom.bin
 git clean -f -q
 cd ../..
 
 # 256KB
 cd ElectronFpga/roms
-./make_rom_image.sh
+./make_rom_image.sh >> ${build}/roms.log
 cp tmp/rom_image.bin ${build}/rom_image_electron.bin
 git clean -f -q
 cd ../..
@@ -70,9 +70,6 @@ cd ../..
 # Build Cores
 ######################################################
 
-
-#if [[ 0 == 1 ]]; then
-
 for core in 0 1 2 3
 do
     name=${names[$core]}
@@ -80,7 +77,7 @@ do
     nextaddr=${nextaddrs[$core]}
     root_path=${root_paths[$core]}
 
-    echo "Core 0 = ${name}; flavour = ${flavour}"
+    echo "Core ${core} = ${name}; flavour = ${flavour}"
 
     cd ${dir}/${flavour}
 
@@ -139,8 +136,6 @@ EOF
     cd ${root_path}
     
 done
-
-#fi
 
 # Build the final multiboot images
 
