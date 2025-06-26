@@ -6,6 +6,6 @@ A multiboot build project for:
 * Core 2 - ElectronFpga
 * Core 3 - AtomFPGA
 
-Pre-built images are available in the [releases section](/releases).
+Pre-built images are available in the [releases](/hoglet67/TangNano20KMultiboot/releases) section.
 
-See the [wiki](/wiki) for information on usage.
+See the [wiki](/hoglet67/TangNano20KMultiboot/wiki) for information on usage.
