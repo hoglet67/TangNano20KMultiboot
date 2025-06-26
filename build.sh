@@ -138,7 +138,7 @@ do
     fi
 
     echo "Local changes:"
-    git diff | grep "^+ "
+    git diff . | grep "^+ "
 
     echo "Calling gw_sh to build the project (this takes a few minutes...)"
 
