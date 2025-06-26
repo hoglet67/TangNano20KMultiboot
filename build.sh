@@ -172,7 +172,7 @@ done
 
 # Build the final multiboot images
 
-cd build
+cd ${build}
 truncate -s 64K  pad1
 truncate -s 176K pad2
 truncate -s 1M   pad3
@@ -187,6 +187,7 @@ cat multiboot_cores.bin pad3 multiboot_roms \
     > multiboot_cores_and_roms.bin
 
 rm -f pad1 pad2 pad3
-cd -
 
-ls -l build
+cd ../..
+
+ls -l ${build}
