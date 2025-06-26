@@ -42,18 +42,21 @@ build=`pwd`/build
 cd BeebFpga/roms
 ./make_rom_image_tangnano.sh
 cp tmp/tang_image_combined_MMFS.bin ${build}/rom_image_beeb.bin
+git clean -f
 cd -
 
 # 256KB
 cd AtomFpga/roms
 ./make_ramrom_tang_image.sh
 cp 16K_avr.bin ${build}/rom_image_atom.bin
+git clean -f
 cd -
 
 # 256KB
 cd ElectronFpga/roms
 ./make_rom_image.sh
 cp tmp/rom_image.bin ${build}/rom_image_electron.bin
+git clean -f
 cd -
 
 ######################################################
