@@ -21,11 +21,11 @@ dirs=(
     AtomFpga/gowin/AtomFpga_TangNano20K
 )
 
-multiboot_paths=(
-    ../../../../../src/multiboot.vhd
-    ../../../../../src/multiboot.vhd
-    ../../../../src/multiboot.vhd
-    ../../../../src/multiboot.vhd
+root_paths=(
+    ../../../../..
+    ../../../../..
+    ../../../..
+    ../../../..
 )
 
 nextaddrs=(
@@ -78,14 +78,14 @@ do
     name=${names[$core]}
     dir=${dirs[$core]}
     nextaddr=${nextaddrs[$core]}
-    multiboot_path=${multiboot_paths[$core]}
+    root_path=${root_paths[$core]}
 
     echo "Core 0 = ${name}; flavour = ${flavour}"
 
     cd ${dir}/${flavour}
 
     # Patch in local source for multiboot.vhd
-    sed -i "s#path=\".*multiboot.vhd#path=\"${multiboot_path}#" tang20k.gprj
+    sed -i "s#path=\".*multiboot.vhd#path=\"${root_path}/src/multiboot.vhd#" tang20k.gprj
 
     # Patch in the next SPI address
     sed -i "s/\(MULTIBOOT_SPI_FLASH_ADDRESS.*:\).*/\1 \"${nextaddr}\",/" impl/tang20k_process_config.json
@@ -136,7 +136,8 @@ EOF
     echo "build successful"
     echo
 
-    cd -
+    cd ${root_path}
+    
 done
 
 #fi
