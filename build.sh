@@ -81,14 +81,18 @@ do
 
     cd ${dir}/${flavour}
 
+    # Make sure the subproject is clean
+    git checkout -q .
+    git clean -f -q
+
     # Patch in local source for multiboot.vhd
     sed -i "s#path=\".*multiboot.vhd#path=\"${root_path}/src/multiboot.vhd#" tang20k.gprj
 
     # Patch in the next SPI address
     sed -i "s/\(MULTIBOOT_SPI_FLASH_ADDRESS.*:\).*/\1 \"${nextaddr}\",/" impl/tang20k_process_config.json
 
-    # Patch in a 25MHz SPI clock speed
-    sed -i "s/\(DOWNLOAD_SPEED.*:\).*/\1 \"250\/10\",/" impl/tang20k_process_config.json
+    # Patch in a 41.666 SPI clock speed
+    sed -i "s/\(DOWNLOAD_SPEED.*:\).*/\1 \"250\/6\",/" impl/tang20k_process_config.json
 
     # Patch in the core ID
     sed  -i "s/\(G_CORE_ID.*:=\).*/\1 ${core};/" src/board_config_pack.vhd
