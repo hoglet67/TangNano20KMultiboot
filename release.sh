@@ -21,6 +21,7 @@ flavours=(
 )
 
 mkdir -p build
+mkdir -p releases
 
 for flavour in ${flavours[@]}
 do
