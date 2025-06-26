@@ -77,21 +77,18 @@ root=../..
 cd BeebFpga/roms
 ./make_rom_image_tangnano.sh >> ${root}/${build}/roms.log
 cp tmp/tang_image_combined_MMFS.bin ${root}/${build}/rom_image_beeb.bin
-git clean -f -q
 cd ${root}
 
 # 256KB
 cd AtomFpga/roms
 ./make_ramrom_tang_image.sh >> ${root}/${build}/roms.log
 cp 16K_avr.bin ${root}/${build}/rom_image_atom.bin
-git clean -f -q
 cd ${root}
 
 # 256KB
 cd ElectronFpga/roms
 ./make_rom_image.sh >> ${root}/${build}/roms.log
 cp tmp/rom_image.bin ${root}/${build}/rom_image_electron.bin
-git clean -f -q
 cd ${root}
 
 ######################################################
@@ -112,7 +109,7 @@ do
 
     # Make sure the subproject is clean
     git checkout -q .
-    git clean -f -q
+    git clean -f -q .
 
     # Patch in local source for multiboot.vhd
     sed -i "s#path=\".*multiboot.vhd#path=\"${root}/src/multiboot.vhd#" tang20k.gprj
@@ -161,7 +158,7 @@ EOF
 
     # Revert any local changes
     git checkout -q .
-    git clean -f -q
+    git clean -f -q .
 
     echo "build successful"
     echo
