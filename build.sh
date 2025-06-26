@@ -12,21 +12,28 @@ names=(
     Beeb
     Electron
     Atom
-    );
+)
 
 dirs=(
     BeebFpga/src/gowin/tang20k
     BeebFpga/src/gowin/tang20k
     ElectronFpga/gowin/ElectronFpga_TangNano20K
     AtomFpga/gowin/AtomFpga_TangNano20K
-    );
+)
+
+multiboot_paths=(
+    ../../../../../src/multiboot.vhd
+    ../../../../../src/multiboot.vhd
+    ../../../../src/multiboot.vhd
+    ../../../../src/multiboot.vhd
+)
 
 nextaddrs=(
     00100000
     00200000
     00300000
     00000000
-    )
+)
 
 mkdir -p build
 rm -rf build/*
@@ -42,22 +49,22 @@ build=`pwd`/build
 cd BeebFpga/roms
 ./make_rom_image_tangnano.sh
 cp tmp/tang_image_combined_MMFS.bin ${build}/rom_image_beeb.bin
-git clean -f
-cd -
+git clean -f -q
+cd ../..
 
 # 256KB
 cd AtomFpga/roms
 ./make_ramrom_tang_image.sh
 cp 16K_avr.bin ${build}/rom_image_atom.bin
-git clean -f
-cd -
+git clean -f -q
+cd ../..
 
 # 256KB
 cd ElectronFpga/roms
 ./make_rom_image.sh
 cp tmp/rom_image.bin ${build}/rom_image_electron.bin
-git clean -f
-cd -
+git clean -f -q
+cd ../..
 
 ######################################################
 # Build Cores
@@ -71,10 +78,14 @@ do
     name=${names[$core]}
     dir=${dirs[$core]}
     nextaddr=${nextaddrs[$core]}
+    multiboot_path=${multiboot_paths[$core]}
 
     echo "Core 0 = ${name}; flavour = ${flavour}"
 
     cd ${dir}/${flavour}
+
+    # Patch in local source for multiboot.vhd
+    sed -i "s#path=\".*multiboot.vhd#path=\"${multiboot_path}#" tang20k.gprj
 
     # Patch in the next SPI address
     sed -i "s/\(MULTIBOOT_SPI_FLASH_ADDRESS.*:\).*/\1 \"${nextaddr}\",/" impl/tang20k_process_config.json
@@ -97,17 +108,13 @@ do
     fi
 
     echo "Local changes:"
-    grep MULTIBOOT_SPI_FLASH_ADDRESS impl/tang20k_process_config.json
-    grep G_CORE_ID src/board_config_pack.vhd
-    if [ "$core" == "0" ]; then
-        grep G_CONFIG_BEEB src/board_config_pack.vhd
-    fi
-    if [ "$core" == "1" ]; then
-        grep G_CONFIG_MASTER src/board_config_pack.vhd
-    fi
+    git diff | grep "^+ "
 
     echo "Calling gw_sh to build the project (this takes a few minutes...)"
 
+    # Clean the pnr directory to make sure no stale files
+    rm -rf impl/pnr
+    
     # Build the project
     gw_sh >${build}/${core}.log 2>&1 <<EOF
     open_project tang20k.gprj
@@ -118,19 +125,25 @@ EOF
     # Copy the bin and fs files
     cp impl/pnr/tang20k.fs ${build}/${core}.fs
     cp impl/pnr/tang20k.bin ${build}/${core}.bin
+    chmod 644 ${build}/${core}.fs
+    chmod 644 ${build}/${core}.bin
     truncate -s 1M ${build}/${core}.bin
 
     # Revert any local changes
-    git checkout .
-    git clean -f
+    git checkout -q .
+    git clean -f -q
+
+    echo "build successful"
+    echo
 
     cd -
 done
 
 #fi
 
+# Build the final multiboot images
+
 cd build
-chmod 644 *.bin
 truncate -s 1M  pad1
 truncate -s 64K pad2
 truncate -s 176K pad3
