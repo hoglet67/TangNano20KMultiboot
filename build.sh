@@ -183,7 +183,7 @@ cat 0.bin 1.bin 2.bin 3.bin \
 cat rom_image_beeb.bin pad1 rom_image_atom.bin pad2 rom_image_electron.bin \
     > multiboot_roms.bin
 
-cat multiboot_cores.bin pad3 multiboot_roms \
+cat multiboot_cores.bin pad3 multiboot_roms.bin \
     > multiboot_cores_and_roms.bin
 
 rm -f pad1 pad2 pad3
