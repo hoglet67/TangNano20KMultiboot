@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-flavour=tang20k_nodebugger_pitube
+flavour=tang20k_nodebugger_vga
 
 # Core 0 - BeebFpga (Master)
 # Core 1 - BeebFpga (Beeb)
@@ -21,7 +21,7 @@ dirs=(
     AtomFpga/gowin/AtomFpga_TangNano20K
 )
 
-root_paths=(
+roots=(
     ../../../../..
     ../../../../..
     ../../../..
@@ -39,36 +39,37 @@ nextaddrs=(
 
 type gw_sh >/dev/null 2>&1 || { echo >&2 "Gowin gw_sh not found on the PATH. Aborting."; exit 1; }
 
-mkdir -p build
-rm -rf build/*
+build=build/${flavour}
 
-# Set build to the absolute path of the build directory
-build=`pwd`/build
+mkdir -p ${build}
+rm -rf ${build}/*
 
 ######################################################
 # Build ROM images
 ######################################################
 
+root=../..
+
 # 512KB
 cd BeebFpga/roms
-./make_rom_image_tangnano.sh >> ${build}/roms.log
-cp tmp/tang_image_combined_MMFS.bin ${build}/rom_image_beeb.bin
+./make_rom_image_tangnano.sh >> ${root}/${build}/roms.log
+cp tmp/tang_image_combined_MMFS.bin ${root}/${build}/rom_image_beeb.bin
 git clean -f -q
-cd ../..
+cd ${root}
 
 # 256KB
 cd AtomFpga/roms
-./make_ramrom_tang_image.sh >> ${build}/roms.log
-cp 16K_avr.bin ${build}/rom_image_atom.bin
+./make_ramrom_tang_image.sh >> ${root}/${build}/roms.log
+cp 16K_avr.bin ${root}/${build}/rom_image_atom.bin
 git clean -f -q
-cd ../..
+cd ${root}
 
 # 256KB
 cd ElectronFpga/roms
-./make_rom_image.sh >> ${build}/roms.log
-cp tmp/rom_image.bin ${build}/rom_image_electron.bin
+./make_rom_image.sh >> ${root}/${build}/roms.log
+cp tmp/rom_image.bin ${root}/${build}/rom_image_electron.bin
 git clean -f -q
-cd ../..
+cd ${root}
 
 ######################################################
 # Build Cores
@@ -79,7 +80,8 @@ do
     name=${names[$core]}
     dir=${dirs[$core]}
     nextaddr=${nextaddrs[$core]}
-    root_path=${root_paths[$core]}
+    root=${roots[$core]}
+    target=${root}/${build}/${core}
 
     echo "Core ${core} = ${name}; flavour = ${flavour}"
 
@@ -90,7 +92,7 @@ do
     git clean -f -q
 
     # Patch in local source for multiboot.vhd
-    sed -i "s#path=\".*multiboot.vhd#path=\"${root_path}/src/multiboot.vhd#" tang20k.gprj
+    sed -i "s#path=\".*multiboot.vhd#path=\"${root}/src/multiboot.vhd#" tang20k.gprj
 
     # Patch in the next SPI address
     sed -i "s/\(MULTIBOOT_SPI_FLASH_ADDRESS.*:\).*/\1 \"${nextaddr}\",/" impl/tang20k_process_config.json
@@ -121,18 +123,18 @@ do
     rm -rf impl/pnr
 
     # Build the project
-    gw_sh >${build}/${core}.log 2>&1 <<EOF
+    gw_sh >${target}.log 2>&1 <<EOF
     open_project tang20k.gprj
     run all
     run close
 EOF
 
     # Copy the bin and fs files
-    cp impl/pnr/tang20k.fs ${build}/${core}.fs
-    cp impl/pnr/tang20k.bin ${build}/${core}.bin
-    chmod 644 ${build}/${core}.fs
-    chmod 644 ${build}/${core}.bin
-    truncate -s 1M ${build}/${core}.bin
+    cp impl/pnr/tang20k.fs ${target}.fs
+    cp impl/pnr/tang20k.bin ${target}.bin
+    chmod 644 ${target}.fs
+    chmod 644 ${target}.bin
+    truncate -s 1M ${target}.bin
 
     # Revert any local changes
     git checkout -q .
@@ -141,7 +143,7 @@ EOF
     echo "build successful"
     echo
 
-    cd ${root_path}
+    cd ${root}
 
 done
 
