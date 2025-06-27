@@ -74,26 +74,26 @@ compile_core () {
     git clean -f -q .
 
     # Patch in local source for multiboot.vhd
-    sed -i "s#path=\".*multiboot.vhd#path=\"${root}/src/multiboot.vhd#" tang20k.gprj
+    sed -i.bak "s#path=\".*multiboot.vhd#path=\"${root}/src/multiboot.vhd#" tang20k.gprj
 
     # Patch in the next SPI address
-    sed -i "s/\(MULTIBOOT_SPI_FLASH_ADDRESS.*:\).*/\1 \"${nextaddr}\",/" impl/tang20k_process_config.json
+    sed -i.bak "s/\(MULTIBOOT_SPI_FLASH_ADDRESS.*:\).*/\1 \"${nextaddr}\",/" impl/tang20k_process_config.json
 
     # Patch in a 41.666 SPI clock speed
-    sed -i "s/\(DOWNLOAD_SPEED.*:\).*/\1 \"250\/6\",/" impl/tang20k_process_config.json
+    sed -i.bak "s/\(DOWNLOAD_SPEED.*:\).*/\1 \"250\/6\",/" impl/tang20k_process_config.json
 
     # Patch in the core ID
-    sed  -i "s/\(G_CORE_ID.*:=\).*/\1 ${core};/" src/board_config_pack.vhd
+    sed -i.bak "s/\(G_CORE_ID.*:=\).*/\1 ${core};/" src/board_config_pack.vhd
 
     # For the Master core, disable the beeb personality
     if [ "${core}" == "0" ]; then
-        sed -i "s/\(G_CONFIG_BEEB.*:=\).*/\1 false;/" src/board_config_pack.vhd
+        sed -i.bak "s/\(G_CONFIG_BEEB.*:=\).*/\1 false;/" src/board_config_pack.vhd
     fi
 
     # For the Beeb core, disable the master personality
     if [ "${core}" == "1" ]; then
-        sed -i "s/\(G_CONFIG_MASTER.*:=\).*/\1 false;/" src/board_config_pack.vhd
-        sed -i "s/set_false_path.*m128_mode.*//" src/board_timings.sdc
+        sed -i.bak "s/\(G_CONFIG_MASTER.*:=\).*/\1 false;/" src/board_config_pack.vhd
+        sed -i.bak "s/set_false_path.*m128_mode.*//" src/board_timings.sdc
     fi
 
     echo "Flavour ${flavour}: Core ${core}: Local changes:"
