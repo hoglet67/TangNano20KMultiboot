@@ -10,3 +10,7 @@
 	path = AtomFpga
 	url = https://github.com/hoglet67/AtomFpga.git
 	branch = master
+[submodule "MasterFpga"]
+	path = MasterFpga
+	url = https://github.com/hoglet67/BeebFpga.git
+	branch = dev

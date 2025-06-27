@@ -25,14 +25,8 @@ mkdir -p releases
 
 for flavour in ${flavours[@]}
 do
-    echo "Building ${flavour} in the background..."
-    ./build.sh ${flavour} > build/${flavour}.log 2>&1 &
-    sleep 5
+    ./build.sh ${flavour} |& tee build/${flavour}.log
 done
-
-echo "Waiting for background tasks to complete"...
-wait $(jobs -p)
-
 
 cd build
 release=$(date +"%Y%m%d")_$(git rev-parse --short=8 HEAD)
