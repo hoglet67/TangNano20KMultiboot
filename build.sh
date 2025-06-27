@@ -1,7 +1,13 @@
-#!/bin/bash
+#!/bin/bash -eu
 
-# Kill child processes on ^C
-trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
+# Allow flavour to be passed in as a positional argument
+flavour=${1:-tang20k_nodebugger_pitube}
+
+# Before doing anything, check gw_sh is available
+type gw_sh >/dev/null 2>&1 || (
+    echo "Error: Gowin gw_sh not found on the PATH" >&2;
+    exit 1
+    )
 
 # Core 0 - BeebFpga (Master)
 # Core 1 - BeebFpga (Beeb)
@@ -84,7 +90,7 @@ compile_core () {
         sed -i "s/\(G_CONFIG_BEEB.*:=\).*/\1 false;/" src/board_config_pack.vhd
     fi
 
-    # For the Beeb core, disable the beeb personality
+    # For the Beeb core, disable the master personality
     if [ "${core}" == "1" ]; then
         sed -i "s/\(G_CONFIG_MASTER.*:=\).*/\1 false;/" src/board_config_pack.vhd
         sed -i "s/set_false_path.*m128_mode.*//" src/board_timings.sdc
@@ -136,13 +142,6 @@ EOF
 ######################################################
 # Main program
 ######################################################
-
-# Allow flavour to be passed in as a positional argument
-if [[ "$1" != "" ]]; then
-    flavour=$1
-else
-    flavour=tang20k_nodebugger_pitube
-fi
 
 if [[ ${flavours[@]} =~ "${flavour}" ]]; then
     echo "Building multiboot core for flavour: ${flavour}"
@@ -197,6 +196,9 @@ start=$(date +'%s')
 
 echo "Flavour ${flavour}: Started"
 
+# Kill child processes on ^C
+trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
+
 for core in 0 1 2 3
 do
     compile_core ${flavour} ${core} &
@@ -212,6 +214,8 @@ do
     wait ${pid[${core}]}
     ret[${core}]=$?
 done
+
+trap - SIGINT SIGTERM EXIT
 
 end=$(date +'%s')
 

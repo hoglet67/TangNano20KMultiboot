@@ -1,14 +1,10 @@
-#!/bin/bash
+#!/bin/bash -eu
 
-# Kill child processes on ^C
-trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
-
-# Before doing anthing, check gw_sh is available
-type gw_sh >/dev/null 2>&1
-if [[ "$?" != "0" ]]; then
-    echo "Gowin gw_sh not found on the PATH" >&2
+# Before doing anything, check gw_sh is available
+type gw_sh >/dev/null 2>&1 || (
+    echo "Error: Gowin gw_sh not found on the PATH" >&2;
     exit 1
-fi
+    )
 
 # Time the build
 start=$(date +'%s')
