@@ -1,13 +1,19 @@
-#!/bin/bash -eu
+#!/bin/bash -u
+
+# Before doing anthing, check gw_sh is available
+GWSH=$(which gw_sh)
+if [[ "$?" != "0" ]]; then
+    GWSH=$(which gw_sh.exe)
+    if [[ "$?" != "0" ]]; then
+        echo "Gowin gw_sh not found on the PATH" >&2
+        exit 1
+    fi
+fi
+
+set -e
 
 # Allow flavour to be passed in as a positional argument
 flavour=${1:-tang20k_nodebugger_pitube}
-
-# Before doing anything, check gw_sh is available
-type gw_sh >/dev/null 2>&1 || (
-    echo "Error: Gowin gw_sh not found on the PATH" >&2;
-    exit 1
-    )
 
 # Core 0 - BeebFpga (Master)
 # Core 1 - BeebFpga (Beeb)
@@ -99,13 +105,13 @@ compile_core () {
     echo "Flavour ${flavour}: Core ${core}: Local changes:"
     git diff . | grep "^+ "
 
-    echo "Flavour ${flavour}: Core ${core}: Calling Gowin gw_sh (this takes a few minutes...)"
+    echo "Flavour ${flavour}: Core ${core}: Calling Gowin ${GWSH} (this takes a few minutes...)"
 
     # Clean the pnr directory to make sure no stale files
     rm -rf impl/pnr
 
     # Build the project
-    gw_sh >${target}.log 2>&1 <<EOF
+    ${GWSH} >${target}.log 2>&1 <<EOF
     open_project tang20k.gprj
     run all
     run close
@@ -148,13 +154,6 @@ if [[ ${flavours[@]} =~ "${flavour}" ]]; then
 else
     echo "Unknown flavour: ${flavour}, supported flavours are:" >&2
     echo "${flavours[@]}" | tr " " "\n" >&2
-    exit 1
-fi
-
-# Before doing anthing, check gw_sh is available
-type gw_sh >/dev/null 2>&1
-if [[ "$?" != "0" ]]; then
-    echo "Gowin gw_sh not found on the PATH" >&2
     exit 1
 fi
 

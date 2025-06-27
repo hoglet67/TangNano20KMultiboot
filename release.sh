@@ -1,10 +1,16 @@
-#!/bin/bash -eu
+#!/bin/bash -u
 
-# Before doing anything, check gw_sh is available
-type gw_sh >/dev/null 2>&1 || (
-    echo "Error: Gowin gw_sh not found on the PATH" >&2;
-    exit 1
-    )
+# Before doing anthing, check gw_sh is available
+GWSH=$(which gw_sh)
+if [[ "$?" != "0" ]]; then
+    GWSH=$(which gw_sh.exe)
+    if [[ "$?" != "0" ]]; then
+        echo "Gowin gw_sh not found on the PATH" >&2
+        exit 1
+    fi
+fi
+
+set -e
 
 # Time the build
 start=$(date +'%s')
