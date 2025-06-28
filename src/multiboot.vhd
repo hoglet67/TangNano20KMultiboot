@@ -38,7 +38,7 @@ begin
                     debounce_counter <= (others => '0');
                 end if;
                 -- wait until the end of the power up reset period to ensure the jumpers are stable
-                if btn3 = '0' and powerup_reset_n_last = '0' and powerup_reset_n = '1' and CORE_ID >= 0 and unsigned(jumper(1 downto 0)) /= to_unsigned(CORE_ID, 2) then
+                if btn3 = '0' and powerup_reset_n_last = '0' and powerup_reset_n = '1' and CORE_ID >= 0 and unsigned(jumper(1 downto 0) xor "11") /= to_unsigned(CORE_ID, 2) then
                     reconfig_r <= '1';
                 end if;
                 -- manually reconfigure when btn3 is depressed
