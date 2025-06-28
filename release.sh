@@ -27,7 +27,7 @@ mkdir -p releases
 
 for flavour in ${flavours[@]}
 do
-    ./build.sh ${flavour} |& tee build/${flavour}.log
+    ./build.sh ${flavour} 2>&1 | tee build/${flavour}.log
 done
 
 cd build
