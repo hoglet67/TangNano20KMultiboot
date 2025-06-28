@@ -15,8 +15,8 @@ set -e
 # Allow flavour to be passed in as a positional argument
 flavour=${1:-tang20k_nodebugger_pitube}
 
-# Core 0 - BeebFpga (Master)
-# Core 1 - BeebFpga (Beeb)
+# Core 0 - BeebFpga (Beeb)
+# Core 1 - BeebFpga (Master)
 # Core 2 - ElectronFpga
 # Core 3 - AtomFPGA
 
@@ -29,15 +29,15 @@ flavours=(
 )
 
 names=(
-    Master
     Beeb
+    Master
     Electron
     Atom
 )
 
 dirs=(
-    MasterFpga/src/gowin/tang20k
     BeebFpga/src/gowin/tang20k
+    MasterFpga/src/gowin/tang20k
     ElectronFpga/gowin/ElectronFpga_TangNano20K
     AtomFpga/gowin/AtomFpga_TangNano20K
 )
@@ -100,22 +100,22 @@ compile_core () {
     # Patch in the core ID
     sed -i.bak "s/\(G_CORE_ID.*:=\).*/\1 ${core};/" src/board_config_pack.vhd
 
-    # Master core customizations
-    if [ "${core}" == "0" ]; then
-        # Disable the beeb personality
-        sed -i.bak "s/\(G_CONFIG_BEEB.*:=\).*/\1 false;/" src/board_config_pack.vhd
-        # Use the local XPM_T65C02 version of the AVR XPM ROM
-        sed -i.bak "s#path=\".*XPM_T65.vhd#path=\"${root}/src/XPM_T65C02.vhd#" tang20k.gprj
-    fi
-
     # Beeb core customizations
-    if [ "${core}" == "1" ]; then
+    if [ "${core}" == "0" ]; then
         # Disable the master personality
         sed -i.bak "s/\(G_CONFIG_MASTER.*:=\).*/\1 false;/" src/board_config_pack.vhd
         # Use the local XPM_T6502 version of the AVR XPM ROM
         sed -i.bak "s#path=\".*XPM_T65.vhd#path=\"${root}/src/XPM_T6502.vhd#" tang20k.gprj
         # Fix entries in the SDC file that refer to m128_mode as this is optimized away
         sed -i.bak "s/set_false_path.*m128_mode.*//" src/board_timings.sdc
+    fi
+
+    # Master core customizations
+    if [ "${core}" == "1" ]; then
+        # Disable the beeb personality
+        sed -i.bak "s/\(G_CONFIG_BEEB.*:=\).*/\1 false;/" src/board_config_pack.vhd
+        # Use the local XPM_T65C02 version of the AVR XPM ROM
+        sed -i.bak "s#path=\".*XPM_T65.vhd#path=\"${root}/src/XPM_T65C02.vhd#" tang20k.gprj
     fi
 
     # Electron core customizations
