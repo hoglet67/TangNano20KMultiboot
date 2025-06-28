@@ -100,6 +100,14 @@ compile_core () {
     # Patch in the core ID
     sed -i.bak "s/\(G_CORE_ID.*:=\).*/\1 ${core};/" src/board_config_pack.vhd
 
+    # If older version of Gowin IDE, then force place_option to '1'
+    # (routablility). This is needed to route the Debugger/VGA
+    # variant of the Beeb core. On 1.9.11 this is unnecessary increases
+    # the build time on Dave's machine from 322s to 487s.
+    if [[ "$GWSH" =~ "1.9.10" ]]; then
+        sed -i.bak "s/\(Place_Option.*:\).*/\1 \"1\",/" impl/tang20k_process_config.json
+    fi
+
     # Beeb core customizations
     if [ "${core}" == "0" ]; then
         # Disable the master personality
