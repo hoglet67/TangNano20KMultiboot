@@ -76,8 +76,14 @@ compile_core () {
     cd ${dir}/${flavour}
 
     # Make sure the subproject is clean
-    git checkout -q .
-    git clean -f -q .
+    git checkout -q ..
+    git clean -f -q ..
+
+    # Patch to remove the pulldown on the update button key
+    for i in $(ls ../src/*.cst)
+    do
+        sed -i.bak "s/\(IO_PORT \"key_conf.*\)DOWN/\1KEEPER/" $i
+    done
 
     # Patch in local source for multiboot.vhd
     sed -i.bak "s#path=\".*multiboot.vhd#path=\"${root}/src/multiboot.vhd#" tang20k.gprj
@@ -103,7 +109,7 @@ compile_core () {
     fi
 
     echo "Flavour ${flavour}: Core ${core}: Local changes:"
-    git diff . | grep "^+ "
+    git diff .. | grep "^+[^+]"
 
     echo "Flavour ${flavour}: Core ${core}: Calling Gowin ${GWSH} (this takes a few minutes...)"
 
@@ -138,8 +144,8 @@ EOF
     fi
 
     # Revert any local changes
-    git checkout -q .
-    git clean -f -q .
+    git checkout -q ..
+    git clean -f -q ..
 
     cd ${root}
     return ${ret}
