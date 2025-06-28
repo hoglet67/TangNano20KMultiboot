@@ -85,7 +85,7 @@ compile_core () {
     # Patch to remove the pulldown on the update button key
     for i in $(ls ../src/*.cst)
     do
-        sed -i.bak "s/\(IO_PORT \"key_conf.*\)DOWN/\1KEEPER/" $i
+        sed -i.bak "s/\(IO_PORT \"key_conf.*\)DOWN/\1UP/" $i
     done
 
     # Patch in local source for multiboot.vhd
