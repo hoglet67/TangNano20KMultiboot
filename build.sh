@@ -36,8 +36,8 @@ names=(
 )
 
 dirs=(
-    BeebFpga/src/gowin/tang20k
     MasterFpga/src/gowin/tang20k
+    BeebFpga/src/gowin/tang20k
     ElectronFpga/gowin/ElectronFpga_TangNano20K
     AtomFpga/gowin/AtomFpga_TangNano20K
 )
