@@ -79,6 +79,9 @@ compile_core () {
     git checkout -q ..
     git clean -f -q ..
 
+    # Patch to remove the ? from the embedded version strings
+    sed -i.bak "s/set dirty \[exec.*/set dirty \"\"/" ../src/version.tcl
+
     # Patch to remove the pulldown on the update button key
     for i in $(ls ../src/*.cst)
     do
