@@ -100,15 +100,35 @@ compile_core () {
     # Patch in the core ID
     sed -i.bak "s/\(G_CORE_ID.*:=\).*/\1 ${core};/" src/board_config_pack.vhd
 
-    # For the Master core, disable the beeb personality
+    # Master core customizations
     if [ "${core}" == "0" ]; then
+        # Disable the beeb personality
         sed -i.bak "s/\(G_CONFIG_BEEB.*:=\).*/\1 false;/" src/board_config_pack.vhd
+        # Use the local XPM_T65C02 version of the AVR XPM ROM
+        sed -i.bak "s#path=\".*XPM_T65.vhd#path=\"${root}/src/XPM_T65C02.vhd#" tang20k.gprj
     fi
 
-    # For the Beeb core, disable the master personality
+    # Beeb core customizations
     if [ "${core}" == "1" ]; then
+        # Disable the master personality
         sed -i.bak "s/\(G_CONFIG_MASTER.*:=\).*/\1 false;/" src/board_config_pack.vhd
+        # Use the local XPM_T6502 version of the AVR XPM ROM
+        sed -i.bak "s#path=\".*XPM_T65.vhd#path=\"${root}/src/XPM_T6502.vhd#" tang20k.gprj
+        # Fix entries in the SDC file that refer to m128_mode as this is optimized away
         sed -i.bak "s/set_false_path.*m128_mode.*//" src/board_timings.sdc
+    fi
+
+    # Electron core customizations
+    if [ "${core}" == "2" ]; then
+        # Use the local XPM_T6502 version of the AVR XPM ROM
+        sed -i.bak "s#path=\".*XPM_T65.vhd#path=\"${root}/src/XPM_T6502.vhd#" tang20k.gprj
+    fi
+
+    # Atom core customizations
+    if [ "${core}" == "3" ]; then
+        # Temporary work around for Gowin MacOS issue locating AVR XPM ROM datafile
+        mkdir -p impl/gwsynthesis
+        cp *.data impl/gwsynthesis
     fi
 
     echo "Flavour ${flavour}: Core ${core}: Local changes:"
