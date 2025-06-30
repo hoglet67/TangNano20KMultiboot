@@ -1,0 +1,40 @@
+/* stdio.h   version 2.1.0   standard I/O functions */
+
+#define BUFSIZ   512
+#define _NFILE   7  /* #files that can be handled */
+
+typedef struct _iobuf {
+   char *_ptr;      /* next character position */
+   int  _cnt;       /* number of characters left */
+   char *_base;     /* location of buffer */
+   int  _flag;      /* mode of file access */
+   int  _file;      /* file descriptor */
+} FILE;
+
+#define   fileno(p) (p)->_file
+
+extern FILE _iob[_NFILE];
+
+#define   stdin     (&_iob[0])
+#define   stdout    (&_iob[1])
+#define   stderr    (&_iob[2])
+
+#define   _IOREAD   01   /* file open for reading */
+#define   _IOWRT    02   /* file open for writing */
+#define   _IORW     04
+#define   _IONBF    010  /* file is unbuffered */
+#define   _IOSTRG   020
+#define   _IOMYBUF  040
+#define   _IOEOF    0100
+#define   _IOERR    0200
+
+#define   NULL      0
+#define   EOF       (-1)
+
+#define   feof(p)   ((p)->_flag&_IOEOF)
+#define   ferror(p) ((p)->_flag&_IOERR)
+#define   getc(p)   (--(p)->_cnt>=0?*(p)->_ptr++:_filbuf(p))
+#define   putc(x,p) (--(p)->_cnt>=0?*(p)->_ptr++=(x):_flsbuf((x),p))
+
+#define   getchar()      getc(stdin)
+#define   putchar(x)     putc(x,stdout)

@@ -1,0 +1,26 @@
+$ .Identify Help utility version 1.00/02
+$ .Key Subject/L[Help]
+$ . above default is in case the alias is not used...
+$ .Help	      MAIN UTILITIES                             
+$ .Help 
+$ .Help	NAME		FUNCTION                            
+$ .Help	Access		Sets file attributes              
+$ .Help	Cat		Catalogues a file or directory
+$ .Help	Configure	Sets system start-up parameters   
+$ .Help	Copy		Copies files                      
+$ .Help	Create		Creates files or directories      
+$ .Help	Date		Sets the date and time            
+$ .Help	Delete		Deletes files or directories      
+$ .Help	Edit		Panos editor
+$ .Help	Link		Panos linker
+$ .Help	Rename		Renames files or directories
+$ .Help	Show		Displays global status information
+$ .Help	Star		Allows access to BBC commands
+$ .Help 
+$ .Help For help on arguments type Help <Name> (e.g. Help Link); more
+$ .Help information about the facilities available can be found in the 
+$ .Help documentation, in particular, in the Panos Guide To Operations.
+$ .Help 
+$ .Help	.HELP		Gives help on built in commands
+$ .Help
+$ <Subject> -Help

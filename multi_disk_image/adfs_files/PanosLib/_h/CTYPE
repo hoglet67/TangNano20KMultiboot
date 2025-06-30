@@ -1,0 +1,20 @@
+/*
+ * CTYPE.H
+ *
+ * 1.1.0  28-Sep-84  ADC
+ * 1.1.1  16-Oct-84  ADC    added _toupper, _tolower
+ * 1.1.2  14-Mar-86  ADC    changed = to == in iscntrl, isspace
+ *
+ */
+#define isupper(c) ('A'<=(c)&&(c)<='Z')
+#define islower(c) ('a'<=(c)&&(c)<='z')
+#define isalpha(c) (islower(c)||isupper(c))
+#define isdigit(c) ('0'<=(c)&&(c)<='9')
+#define isalnum(c) (isalpha(c)||isdigit(c))
+#define isspace(c) ((c)==' '||(c)==9||(c)==10||(c)==13||(c)==12)
+#define isascii(c) ((c)<0200)
+#define iscntrl(c) ((c)<040||(c)==0177)
+#define isprint(c) (040<=(c)&&(c)<=0176)
+#define ispunct(c) (isprint(c)&&!isalnum(c))
+#define _toupper(c) (islower(c)?(c)-'a'+'A':(c))
+#define _tolower(c) (isupper(c)?(c)-'A'+'a':(c))

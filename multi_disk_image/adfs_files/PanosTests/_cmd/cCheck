@@ -1,0 +1,8 @@
+$ .Identify C installation test v1.40/01
+$ . Checking C installation
+$ .swd $.PanosTests
+$ cc cworld
+$ link cworld c,pas
+$ cworld
+$ . 
+$ . C installation check completed

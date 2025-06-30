@@ -1,0 +1,190 @@
+% Package for drawing fractal curves
+% Due to Arthur Norman
+
+(de fractal (n               % recursion depth
+             size            % length of object at this depth
+             forwardp        % drawing forward or backward along base line?
+             which!-side     % drawing on left or right side of base line?
+             angles          % list of angles to turn through
+             lengths         % list of items (xlength xforwardp xwhich-side)
+                             % used to adjust args in next call down
+             drawfn          % function used to draw at recursion limit
+             )
+   (if (zerop n)             % at bottom of recursion
+       (if drawfn (drawfn size which!-side) (draw size))
+       (let
+         ((al (cl!:mapcar (lambda (theta) (times theta which!-side))
+                          (if forwardp angles (reverse angles))))
+          (ll (cl!:mapcar (lambda (j) (list (times size (car j))
+                                            (eq forwardp (cadr j))
+                                            (times which!-side (caddr j))))
+                          (if forwardp lengths (reverse lengths)))))
+         (turn (car al))
+         (cl!:mapc (lambda (theta j)
+                      (fractal (sub1 n)
+                               (car j)
+                               (cadr j)
+                               (caddr j)
+                               angles
+                               lengths
+                               drawfn)
+                      (turn theta))
+                    (cdr al)
+                    ll)))
+   n)
+
+% Introduce some useful constants
+
+(fluid '(sqrt!-half third))
+
+(setq sqrt!-half (sqrt 0.5) third (quotient 1 (float 3)))
+
+
+(de dragon (n)         % Dragon curve, order n
+   (cls)
+   (moveto 640 256)
+   (fractal (if n n 11) 512 t 1
+            '(-45                   90                      -45  )
+            `(    (,sqrt!-half t 1)    (,sqrt!-half nil -1)      )))
+
+
+(de didragon (n)       % Double-Dragon curve, order n
+   (cls)
+   (moveto 640 256)
+   (dotimes (i 2)
+      (fractal (if n n 11) 512 t 1
+            '(-45                   90                      -45  )
+            `(    (,sqrt!-half t 1)    (,sqrt!-half nil -1)      ))
+      (turn 180)))
+
+
+(de c (n)              % C-curve, order n
+   (cls)               % note how very similar to Dragon curve
+   (moveto 640 256)
+   (fractal (if n n 11) 512 t 1
+            '(-45                   90                   -45  )
+            `(    (,sqrt!-half t 1)    (,sqrt!-half t 1)      )))
+
+
+(de a (n)              % Another friend of the above
+   (cls)
+   (moveto 640 256)
+   (fractal (if n n 11) 512 t 1
+            '(-45 90 -45)
+            `((,sqrt!-half nil -1)
+              (,sqrt!-half nil 1))))
+
+(de sier (n)           % Sierpinsky-style space filling curve
+   (cls)
+   (moveto 1000 100)
+   (fractal (if n n 6) 800 t 1 '(-90 90 0 90 -90)
+     '((0.5 t -1) (0.5 t 1) (0.5 t 1) (0.5 t -1))
+     (function sier!-segment)))
+
+(de sier!-segment (size which!-side)  % Draws base-line for the above
+   (turn (times -60 which!-side))
+   (draw (times size 0.5))
+   (turn (times 60 which!-side))
+   (draw (times size 0.5))
+   (turn (times 60 which!-side))
+   (draw (times size 0.5))
+   (turn (times -60 which!-side)))
+
+
+(de snowflake (n)      % A space-filling snowflake curve
+   (cls)
+   (moveto 300 256)
+   (turn 90)
+   (fractal (if n n 4) 850.0 t 1
+            '(-60 0 60 60 90 -150 0 0)
+            `((,third t -1)
+              (,third nil 1)
+              (,third nil 1)
+              (,third nil 1)
+              (,(quotient (sqrt 3) (float 3)) nil -1)
+              (,third t -1)
+              (,third nil 1))))
+
+(de koch (n)           % A different snowflake curve
+   (cls)               % (this just draws an outline)
+   (moveto 300 256)
+   (turn 90)
+   (dotimes (i 3)
+      (fractal (if n n 4) 850.0 t 1
+         '(0              60             -120              60              0)
+         `(  (,third t 1)    (,third t 1)     (,third t 1)    (,third t 1)  ))
+      (turn -120)))
+
+(de anti!-koch (n)     % Yet a different snowflake curve
+   (cls)
+   (moveto 300 256)
+   (turn 90)
+   (dotimes (i 3)
+      (fractal (if n n 4) 850.0 t 1
+         '(0             -60              120             -60              0)
+         `(  (,third t 1)    (,third t 1)     (,third t 1)    (,third t 1)  ))
+      (turn -120)))
+
+
+(de x (n)
+   (cls)
+   (moveto 640 100)
+   (fractal (if n n 5) 800 t 1
+      '(0 -90 90 90 -90 -90 90 0)
+      '((0.25 t 1) (0.25 t -1) (0.25 t 1)
+        (0.75 t 1) (0.25 t -1) (0.5 t -1) (0.25 nil 1))))
+
+
+
+(de canopy!-sub (n height a r)  % Draw general fractal canopy
+   (if (zerop n)
+       (progn (draw height) (move (minus height)))
+       (progn
+          (draw (times height r))
+          (turn (minus a))
+          (canopy!-sub (sub1 n) (times height (difference 1 r)) a r)
+          (turn (times 2 a))
+          (canopy!-sub (sub1 n) (times height (difference 1 r)) a r)
+          (turn (minus a))
+          (move (minus (times height r))))))
+
+(de canopy (n a r)              % Fractal canopy with default values
+   (cls)
+   (moveto 640 100)
+   (canopy!-sub (if n n 11)
+                800
+                (if a a 33)
+                (if r r 0.277)))
+
+
+(de fprandom ()
+   (quotient (remainder (random) 1000000) 1000000.0))
+
+(de random!-canopy!-sub (n height a r)
+   (if (zerop n)
+       (progn (draw height) (move (minus height)))
+       (let
+          ((this!-r (plus r (times (fprandom) r)))
+           (this!-a (plus a (times (fprandom) a))))
+          (draw (times height this!-r))
+          (turn (minus this!-a))
+          (random!-canopy!-sub (sub1 n)
+              (times height (difference 1 this!-r)) a r)
+          (turn (times 2 this!-a))
+          (random!-canopy!-sub (sub1 n)
+              (times height (difference 1 this!-r)) a r)
+          (turn (minus this!-a))
+          (move (minus (times height this!-r))))))
+
+(de random!-canopy (n a r)      % Fractal random canopy with default values
+   (cls)
+   (moveto 640 100)
+   (random!-canopy!-sub (if n n 11)
+                        800
+                        (if a a 20)
+                        (if r r 0.24)))
+
+
+
+
+fin

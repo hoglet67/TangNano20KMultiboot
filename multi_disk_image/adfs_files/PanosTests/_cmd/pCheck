@@ -1,0 +1,9 @@
+$ .Identify Pascal installation test v1.10/01
+$ . Checking Pascal installation
+$ .set cli$stop -1
+$ .swd $.PanosTests
+$ pascal pworld
+$ link pworld pas
+$ pworld
+$ . 
+$ . Pascal installation check completed

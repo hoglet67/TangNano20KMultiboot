@@ -1,0 +1,59 @@
+      PROGRAM Fourier
+C     Fourier Demonstration Program
+C     Originally due to David Evans
+C     Shows use of BBC graphics through Panos
+C     Calls Panos Time and Date functions (via interface library).
+C     
+      DIMENSION Y(180)
+      CHARACTER FNTIME*8, FNDATE*9
+      LOGICAL FNTIMESET
+      RAD = 180./3.14159265
+      DO 1 N=1,180
+  1     Y(N)=0.
+C
+      OPEN (10, FILE='RAWVDU:', FORM='PRINTER')
+C
+      CALL SETU(10)
+      CALL LIMITS(0.,182.,0.,1.2)
+      CALL MODE(0)
+      CALL PALETE(1,6)
+C
+      DO 10 M=1,26,2
+        CALL MOVE(0.0,0.0)
+        DO 20 N=1,180
+          Y(N)=Y(N)+SIN(M*(N/RAD))/M
+          CALL DRAW(REAL(N),Y(N))
+ 20     CONTINUE
+ 10   CONTINUE
+C
+      CALL PALETE(1,3)
+      IF (FNTIMESET()) THEN
+         CALL TEXT (100., 0.5,
+     +             'Fourier demonstration finished at '//
+     +             FNTIME()//' on '//FNDATE())
+      ELSE
+         CALL TEXT (100.,0.5, 'Fourier demonstration finished')
+      ENDIF
+      CALL MOVE(0.0,0.0)
+      END
+
+      CHARACTER*8 FUNCTION FNTIME ()
+      CHARACTER*8 BUFF
+      INTEGER LEN
+      LEN = IFTIME (BUFF)
+      FNTIME = BUFF
+      END
+
+      CHARACTER*9 FUNCTION FNDATE ()
+      CHARACTER*9 BUFF, CH
+      INTEGER LEN
+      LEN = IFXDATE (BUFF)
+      CH = BUFF(1:1)
+      IF (CH .EQ. ' ' .OR. CH .EQ. '0') BUFF = BUFF (2:9)
+      FNDATE = BUFF
+      END
+
+      LOGICAL FUNCTION FNTIMESET ()
+      INTEGER TBUFF(2)
+      FNTIMESET = IFBINARYTIME (TBUFF) .GE. 0
+      END

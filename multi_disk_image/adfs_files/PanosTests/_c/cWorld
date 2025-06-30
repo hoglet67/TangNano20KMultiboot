@@ -1,0 +1,6 @@
+/* 32000 c - basic confidence test */
+
+main()
+{
+   printf("hello c world\n");
+}

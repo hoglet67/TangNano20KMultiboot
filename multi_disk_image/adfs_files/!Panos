@@ -1,0 +1,79 @@
+$ .Identify ADFS !Panos Version 1.4/01
+$
+$ .set Context$D0	"dfs::0."
+$ .set Context$D1	"dfs::1."
+$ .set Context$D2	"dfs::2."
+$ .set Context$D3	"dfs::3."
+$ .set Context$A0	"adfs::0."
+$ .set Context$A1	"adfs::1."
+$ .set Context$A4	"adfs::4."
+$ .set Context$A5	"adfs::5."
+$
+$ .set Context$PanosLib A0:$.PanosLib.
+$
+$ .path  "store:, PanosLib:, @."
+$
+$ .set Program$Verbosity 2
+$ .set CLI$Echo True
+$
+$ .cache PanosLib:Utility-rif
+$
+$ .Set Edit$HostCode	PanosLib:Edit6502-bbc
+$ .Set Edit$HelpFile	PanosLib:EditHelp-dat
+$ .Set Edit$InitFile	PanosLib:EditInit-dat
+$ .Set Edit$ScreenMode	0
+$
+$ .Set LL$be		PanosLib:LLbe-rif
+$ .Set Pas$fe		PanosLib:PASfe-rif
+$ .set cc$fe		PanosLib:ccfe-rif
+$ .set c$Include	A0:$.PanosLib
+$
+$ .Set Link$Lib:Panos	PanosLib:Panos
+$ .Set Link$Lib:f77	PanosLib:f77
+$ .Set Link$Lib:ifp	PanosLib:ifp
+$ .Set Link$Lib:pas	PanosLib:pas
+$ .Set Link$Lib:c	PanosLib:c
+$ .Set Link$Lib_List	Panos
+$
+$ . File extensions - for DFS only
+$
+$ .Set File$dfs:-cmd	e.-
+$ .Set File$dfs:-rif	r.-
+$ .Set File$dfs:-bbc	6.-
+$ .Set File$dfs:-lib	q.-
+$ .Set File$dfs:-dat	d.-
+$ .Set File$dfs:-asm	a.-
+$ .Set File$dfs:-f77	f.-
+$ .Set File$dfs:-pas	p.-
+$ .Set File$dfs:-lis	y.-
+$ .Set File$dfs:-map	m.-
+$ .Set File$dfs:-lsp	l.-
+$ .Set File$dfs:-lim	i.-
+$ .Set File$dfs:-aof	o.-
+$ .Set File$dfs:-tmp	z.-
+$ .Set File$dfs:-h	h.-
+$ .Set File$dfs:-c	c.-
+$ .Set File$dfs:-src	s.-
+$ .Set File$dfs:-txt	t.-
+$
+$ . Aliases - 2-stage alias for utilities to reduce string usage
+$
+$ .set Alias$_ut	Utility -utility
+$ .set Alias$Copy	_ut copy
+$ .set Alias$Rename	_ut rename
+$ .set Alias$Access	_ut access
+$ .set Alias$Create	_ut create
+$ .set Alias$Delete	_ut delete
+$ .set Alias$Set	_ut set
+$ .set Alias$Show	_ut show
+$ .set Alias$Logon	_ut logon
+$ .set Alias$Logoff	_ut logoff
+$ .set Alias$Cat	_ut catalogue
+$ .set Alias$Catalogue	_ut catalogue
+$
+$ . no Echo utility now - built in .echo command suffices
+$ .set Alias$Echo	.echo
+$
+$ .set Alias$Dir	Set dir
+$ .Set Alias$vLisp	"Lisp -image PanosLib:LispImage -identify"
+$ .Set Alias$Help	".Key Subj/L[-Help]~Help -NoVerbose -Subject <Subj>"

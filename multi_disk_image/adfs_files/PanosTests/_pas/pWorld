@@ -1,0 +1,7 @@
+PROGRAM World (Output);
+
+{ Acorn 32000 ISO Pascal - basic confidence test }
+
+BEGIN
+   WriteLn ('Hello Pascal world')
+END.

@@ -1,0 +1,417 @@
+|||Nothing|||0
+DESCRIPTION:  (reserved operation)
+|||Escape|||0
+DESCRIPTION:  Abandon current operation (if any)
+|||QuitEdit|||0
+DESCRIPTION:  Quit editor (+ 'y' or 'yes' to prompt)
+|||Disaster|||0
+DESCRIPTION:  Emergency return to Panos
+|||Left|||0
+DESCRIPTION:  Cursor left
+|||Right|||0
+DESCRIPTION:  Cursor right
+|||UpLine|||0
+DESCRIPTION:  Move up a line
+|||DownLine|||0
+DESCRIPTION:  Move down a line
+|||StartLin|||0
+DESCRIPTION:  Move to start of line
+|||EndLine|||0
+DESCRIPTION:  Move to end of line
+|||UpPage|||0
+DESCRIPTION:  Move up a Screen
+|||DownPage|||0
+DESCRIPTION:  Move down a Screen
+|||ToStart|||0
+DESCRIPTION:  Move to start of buffer
+|||ToEnd|||0
+DESCRIPTION:  Move to end of buffer
+|||JumpLine|||0
+DESCRIPTION:  Jump to line number
+
+DETAILS:  A prompt is given for a line number. This should be entered and
+          terminated by RETURN.  The cursor is then placed at the line
+          number which the user has supplied (lines are numbered in the
+          buffer starting from 1).  If there are less lines in the buffer
+          than the specified line number, the cursor is positioned at the
+          end of the buffer.
+|||JumpMark|||0
+DESCRIPTION:  Jump to marked position
+
+DETAILS:  To move to a marked position, press CTRL-F0.  If no markers are
+          set then nothing will happen, otherwise the cursor will be moved
+          to a marked position.  If two markers are set and the cursor is
+          positioned on one of the markers then issuing this command will
+          cause it to move to the other marker.
+|||Insert|||0
+DESCRIPTION:  Insert character
+|||Literal|||0
+DESCRIPTION:  Insert next key
+
+DETAILS:  In many contexts a large number of keys and key combinations are
+          interpreted by the editor as having special meanings, e.g. pressing
+          key F2 will clear a text marker or markers.  Use of the Insert
+          Next Key command (CTRL-\) will prevent the normal interpretation
+          of the following key or key-combination from being applied: instead
+          the numeric code assigned to that key(-combination) will be
+          inserted into the text at the current cursor position.  This may
+          be useful, for example in entering control codes into a buffer.
+|||CtrlM|||0
+DESCRIPTION:  Insert CTRL-M
+
+DETAILS:  This key-combination permits entry of the control code <CR>, i.e.
+          Carriage-Return, ASCII code 13, into a piece of text.  This is
+          useful since normally the RETURN key is interpreted not as <CR>
+          but as meaning "newline", ASCII code 10, <LF>.
+|||NewLine|||0
+DESCRIPTION:  Insert a newline
+|||Tab|||0
+DESCRIPTION:  Insert tab
+|||DelLeft|||0
+DESCRIPTION:  Delete left
+|||DelRight|||0
+DESCRIPTION:  Delete right
+|||DStartLn|||0
+DESCRIPTION:  Delete to start of line
+|||DEndLine|||0
+DESCRIPTION:  Delete to end of line
+|||DelLine|||0
+DESCRIPTION:  Delete line
+|||SetMark|||0
+DESCRIPTION:  Set a marker at the current cursor postion.
+
+DETAILS:  Setting a marker (or markers) defines a 'block' of text upon which
+          various operations can be performed. In most cases, only one marker
+          is necessary; the cursor acts as the second marker.  However, two
+          markers are required to move and copy text, and to save a block as
+          a separate file.  No more than two markers can be set at any one
+          time.  The text within a block spans the character immediately
+          after the first marker (or cursor), and the character directly
+          before the last marker (or cursor). This is made obvious by the
+          text being shifted to the right after setting a marker.
+
+USES:     Moving a block
+          Copying a block
+          Saving a block as a separate file
+          Search/Replace within a block
+          Deleting a block
+
+|||DelMark|||0
+DESCRIPTION:  Delete a marker or markers.
+
+DETAILS:  The effect of this command is determined by the number and position
+          of any text markers.  If there are none, it has no effect.  If
+          the cursor is not directly at a marked position then all markers 
+          (there are at most two) are deleted, provided that the cursor is
+          in the same buffer as the marker(s).  If the cursor is positioned
+          exactly upon a text marker then it alone will be deleted;  hence
+          pressing F2 twice will guarantee to delete all markers in the
+          current buffer.
+          Saving a buffer containing markers to a file causes them to be
+          deleted automatically.
+|||CopyArea|||0
+DESCRIPTION:  A block of text is copied to the current cursor position.
+
+DETAILS:  The portion of text to be copied needs to be delimited
+          using two markers; one at the beginning, one at the end
+          of the block.  (Markers are set using the F0 key).  After
+          setting the markers, move the cursor to where you want
+          the marked text, and press the function key.  Note that
+          this command reproduces the block.  Moving a block can be
+          accomplished using the Move Area command, key SHIFT F1.
+|||MoveArea|||0
+DESCRIPTION:  A block of text is moved to the current cursor position.
+
+DETAILS:  The portion of text to be moved needs to be delimited by
+          two markers; one at the beginning, one at the end of the
+          block.  (Markers are set using the F0 key).  After the
+          markers have been set, move the cursor to where you want
+          the marked text, and press SHIFT F1.  Note that this
+          command moves the block, deleting the original text.  To
+          copy a block (i.e. with no deletion of the original), use
+          the Copy Area command, key F1.
+|||DelBlock|||0
+DESCRIPTION:  Delete a block of text.
+
+DETAILS:  In order to delete a block of text, set one marker at either
+          end of the block.  (Markers are set using the F0 key).  Place
+          the cursor at the character immediately beyond the portion of
+          text to be deleted, then press SHIFT F2.  The text between
+          the marker and the cursor will be deleted.  Note that it is
+          usually possible to recover a block deleted in this way by
+          using the Undo Deletion command, SHIFT TAB.
+|||UnDelete|||0
+DESCRIPTION:  Undo Deletion
+|||PushBind|||0
+DESCRIPTION:  Locally bind action
+|||PopBind|||0
+DESCRIPTION:  Locally un-bind action
+|||GlobalBind|||0
+DESCRIPTION:  Globally bind action
+|||MoveBind|||0
+DESCRIPTION:  Move bound action
+|||DuplicateWindow|||0
+DESCRIPTION:  Duplicate window
+|||SplitWindow|||0
+DESCRIPTION:  Split window
+|||KillWindow|||0
+DESCRIPTION:  Kill window
+|||SelectWindow|||0
+DESCRIPTION:  Select next window
+|||SwitchWindow|||0
+DESCRIPTION:  Switch to next window
+|||BufLeft|||0
+DESCRIPTION:  Buffer Left
+|||BufRight|||0
+DESCRIPTION:  Buffer Right
+|||BufUp|||0
+DESCRIPTION:  Buffer Up
+|||BufDown|||0
+DESCRIPTION:  Buffer Down
+|||WinLeft|||0
+DESCRIPTION:  Scroll Window Left
+|||WinRight|||0
+DESCRIPTION:  Scroll Window Right
+|||WinUp|||0
+DESCRIPTION:  Scroll Window Up
+|||WinDown|||0
+DESCRIPTION:  Scroll Window Down
+|||Help|||0
+DESCRIPTION:  Help !!
+|||MoreHelp|||0
+DESCRIPTION:  Next Help level
+|||EndHelp|||0
+DESCRIPTION:  Exit Help level
+|||HelpBits|||0
+DESCRIPTION:  Detailed Help
+|||ISearch|||0
+DESCRIPTION:  Search for a pattern of text
+
+DETAILS:  A window is created containing the prompt for a search pattern.
+          The search pattern (characters to be searched for) should be typed
+          in and terminated by RETURN. The text in the buffer is then
+          scanned for the pattern, starting from the cursor position and
+          continuing until either a marker or the end of file is reached.
+          If a match is found, the cursor is left at the start of the
+          found text, and the search window is removed.  Otherwise, an
+          error message will appear, and the search window is re-displayed.
+          At this point the search pattern may be edited and retried.
+          Searching backwards i.e. from the cursor towards the start of the
+          file (or the nearest marker) is accomplished by typing CTRL-B as
+          the first character after the prompt.  Pressing the COPY key
+          inserts the previous search/replace pattern, which is useful if
+          a slight alteration is to be made to the pattern.  ESCAPE closes
+          the search window, returning to the main text, at any point in
+          the procedure before RETURN has been pressed.
+USES:     Searching for a word, or a particular configuration of
+          characters.  The search pattern may consist of special
+          characters which represent classes of normal characters.
+|||ISearch|||1
+   .   any character 
+   \   the character immediately following the \ in the pattern
+       (useful for matching special search characters) 
+   #   any digit '0'..'9'
+   @   any alphabetic 'A'..'Z'  'a'..'z'  '0'..'9'  '_'
+   $   a RETURN character
+   *   any number of the following character. This always finds the
+       shortest match e.g. *c will match c ccc etc. finding c first
+   ^c  any number of the following character. This always finds the
+       longest match e.g. ^c matches c ccc etc. finding ccc first
+  A-Z  matches any single character in the range A to Z in ASCII order
+       e.g. s-w finds the first occurrence of s,t,u,v,or w
+ [abc] matches any one of a, b, or c where a b and c are single characters
+   |   matches a CTRL character e.g. |f, if the character is in the range
+       ASCII 64 to 95. CTRL codes may also be typed directly.
+   |!c matches a character with ASCII code of c plus 128
+   `   instigates case sensitivity so that, for instance, `This matches
+       This and only This, whereas normally, This matches THIS, thIs etc.
+ These special search characters can be used singly or in combinations
+ e.g. `P#*.n$  searches for the letter 'P' followed by a number, then by
+ an indeterminate number of charaters, but ending with an 'n' directly
+ before the end of the line.
+|||ISearchReplace|||0
+DESCRIPTION:  Replace one pattern with another
+
+DETAILS:  A window appears containing the prompt for a search pattern.
+          This should be entered and terminated by RETURN; a prompt for
+          the replacement pattern will then appear.  Enter the replacement
+          pattern then RETURN.  The editor will look for a match for the
+          search pattern.  If none is found, an error message is shown and
+          the search/replace window is re-displayed to permit editing of
+          the patterns.  If a match is made, the main buffer cursor is
+          placed over the first occurrence of the match and the editor
+          prompts for a replacement option.  These are described below:
+          To activate a given option type the first letter of its name.
+             Once:     do the replacement once then return to the main window
+             Escape:   abandon the operation at this point (= ESCAPE key)
+             Replace:  do the replacement, find the next match and re-prompt
+             Skip:     look for the next match without making the replacement
+             All:      replace this and all further matches without prompting
+             Help:     give information about the replacement options
+          Note that an actual RETURN character is signified in the search or
+          replacement patterns by '$'.
+          ESCAPE abandons the operation when pressed at any prompt.
+          COPY causes the last search or replace pattern to be inserted.
+|||ISearchReplace|||1
+   .   any character 
+   \   the character immediately following the \ in the pattern
+       (useful for matching special search characters) 
+   #   any digit '0'..'9'
+   @   any alphabetic 'A'..'Z'  'a'..'z'  '0'..'9'  '_'
+   $   a RETURN character
+   *   any number of the following character. This always finds the
+       shortest match e.g. *c will match c ccc etc. finding c first
+   ^   any number of the following character. This always finds the
+       longest match e.g. ^c matches c ccc etc. finding ccc first
+  A-Z  matches any single character in the range A to Z in ASCII order
+       e.g. s-w finds the first occurrence of s,t,u,v,or w
+ [abc] matches any one of a, b, or c where a b and c are single characters
+   |   matches a CTRL character e.g. |f, if the character is in the range
+       ASCII 64 to 95. CTRL codes may also be typed directly.
+   |!c matches a character with ASCII code of c plus 128
+   `   instigates case sensitivity so that, for instance, `This matches
+       This and only This, whereas normally, This matches THIS, thIs etc.
+ These special search characters can be used singly or in combinations
+ e.g. `P#*.n$  searches for the letter 'P' followed by a number, then by
+ an indeterminate number of charaters, but ending with an 'n' directly
+ before the end of the line.
+|||ISearchReplace|||2
+$   A RETURN character
+&   The whole of the search pattern e.g. (&) puts brackets around the 
+    search text
+|c  replaces with CTRL c
+|!c replaces  with the character with ASCII code of c plus 128
+\c  replaces with c even if c is a replacement pattern character  e.g.
+    \& replaces with the character '&', and not the whole search pattern.
+%n  represents the nth (counting from 0) wildcard section in the search
+    pattern. For example, in the search pattern '^a*.@', %0 corresponds to
+    the character(s) matched by '^a'; %1 stands for the text matched by 
+    '*.' ; and %2 is the text matched by '@'. To save counting, the
+    number 'n' can be prefixed by a special character, e.g. %@3 signifies
+    the 3rd @ match.
+
+|||RepeatSearch|||0
+DESCRIPTION:  Repeat last search command
+
+DETAILS:  This command searches from the cursor for the same pattern as
+          specified in the last search/replace command. The search 
+          continues until a marker or the end of file is reached.
+          No window and no prompt is given. The search is carried out 
+          automatically.
+
+|||RepeatReplace|||0
+DESCRIPTION:  Repeat last replace
+
+DETAILS:  A window is created containing the search and replace patterns
+          used in the previous replace operation. The options are 
+          displayed again, so that a different choice may be made.
+
+|||Backward|||0
+DESCRIPTION: Search/Replace backwards
+|||DefMacro|||0
+DESCRIPTION:  Learn a sequence of editor commands
+
+DETAILS:  After pressing the F4 key, whatever keys are typed in until the
+          F4 key is pressed again, are remembered for later use.  To remind
+          the user that keystrokes are being learned, a short "[ Learning ]"
+          message is displayed towards the right end of the top screen line.
+          This is removed at the second press of F4.  In order to 'replay'
+          the sequence of keystrokes, use the Execute Learnt Sequence
+          command on key SHIFT F4.  Note that it is possible to include
+          a previously learnt sequence (i.e. by pressing SHIFT F4) in a new 
+          sequence, but that after the new sequence has been completed, the
+          old one will no longer be available.
+          
+USES:     Repeating any common sequence of actions e.g. copying a portion
+          of text several times, changing indentation. 
+|||DoMacro|||0
+DESCRIPTION:  Execute learnt sequence
+
+DETAILS:  Pressing SHIFT F4 causes the 'replay' of a sequence of keystrokes
+          previously entered using the Learn sequence command, key F4.  The
+          default sequence is empty.
+|||LoadFile|||0
+DESCRIPTION:  Load a file into the editor.
+
+DETAILS:  A window is created containing a prompt for a filename.  The
+          name is terminated by pressing RETURN. If this file is found,
+          it is loaded into the editor at the current cursor position.
+          The cursor is left at the start of the newly loaded file.
+          If the COPY key is pressed, the name of the last file loaded
+          to or saved from the current buffer is inserted.
+          Pressing ESCAPE closes the window, which is useful when a
+          mistake has been made.
+
+|||LoadNewF|||0
+DESCRIPTION:  Clear the buffer, then load a file
+
+DETAILS:  The buffer is cleared (i.e. the editing window is emptied), and
+          a window appears containing a prompt for a filename. The name
+          is terminated by pressing RETURN. If a file of that name is
+          found, then it is loaded into the editing window, leaving the
+          cursor at the start of the file. 
+          If the COPY key is pressed, the name of the last file loaded
+          or saved is reproduced.
+          Pressing ESCAPE clears the name given to the prompt, which is
+          useful if a mistake has been made.
+|||SaveFile|||0
+DESCRIPTION:  Save the whole file
+
+DETAILS:  Pressing this function key causes a window to appear, containing
+          a prompt for a file name. After supplying a file name, which
+          may consist of the whole path (e.g. &.panos.files.filename),
+          or just the 'leaf' filename, (if the current directory is the
+          appropriate place for the file), pressing RETURN adds the
+          closing brackets, and then saves the contents of the current
+          buffer as a file of that name.
+          Caution is required when choosing the filename, as no warning
+          is given if a file of the same name already exists in the 
+          current directory; the old file is merely overwritten.
+          However, an error message is given if an illegal filename is
+          supplied (e.g. one which is too long for the filing system).
+          Note that the COPY key can be used after the prompt to 
+          reproduce the name of the last file loaded into, or saved from
+          the current window.
+          If an undesirable filename has been given, pressing ESCAPE
+          (as long as this is done before pressing RETURN) closes the
+          window, returning to the editor.
+|||CopyLast|||0
+DESCRIPTION: Copy last parameter
+|||ExitEdit|||0
+DESCRIPTION: Exit recursive edit
+|||Command|||0
+DESCRIPTION:  Give access to the (Panos) command line interpreter 
+
+DETAILS:  Pressing this key causes a window to appear containing the
+          usual prompt. Unless altered by the user, this is a '->' sign.
+          Built-in commands (beginning with a '.') or utilities (e.g. cat)
+          may now be carried out.
+          Pressing escape or RETURN closes the window, returning to the 
+          editor.
+USES:     This facility is particularly useful for finding out the names 
+          of files, moving and creating directories, and changing filing
+          systems (e.g. from adfs to dfs).
+|||FlipFold|||0
+DESCRIPTION: Flip Folded
+
+DETAILS:  In normal use the editor will not display text which extends a
+          line beyond the right-hand edge of a window.  However, in order
+          to view such items (other than by shifting the whole buffer left
+          in the window using the Scroll Window Left command), it is possible
+          to display the text in a "folded" mode, whereby long lines wrap
+          round onto extra screen lines.  This is done by pressing CTRL-F.
+          The normal screen display mode is resumed by pressing CTRL-F again.
+          It is currently NOT recommended to attempt editing in folded mode.
+|||FlipTabs|||0
+DESCRIPTION: Flip Tabs indicators
+
+DETAILS:  Normally, TAB characters in the text are displayed as a number of
+          spaces, determined by the position within the line at which they
+          occur and the settings of the Panos system Tab Stops.  However,
+          by pressing CTRL-T, the editor may be made to display TABs as
+          horizontal arrows whose length is determined in the same way as
+          the width of the tab field.  By this means the exact structure of
+          layout of blank areas of text may be made visible (spaces are
+          always displayed as blanks). This form of display may be cancelled
+          by pressing CTRL-T again.
+|||

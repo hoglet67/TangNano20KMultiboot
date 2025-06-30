@@ -1,0 +1,6 @@
+$ .key filename
+$ . ExecF77
+$ . sample command file to compile, load and run Fortran programs 
+$ f77 <filename>
+$ link <filename> f77
+$ <filename>

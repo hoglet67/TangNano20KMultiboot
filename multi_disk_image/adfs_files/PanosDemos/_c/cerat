@@ -1,0 +1,36 @@
+/*
+ *   Example C program:
+ *   Sieve of Eratosthenes - simple minded implementation
+ */
+
+#include <stdio-h>
+
+#define MAXLIMIT 10000
+#define TRUE        -1
+#define FALSE        0
+
+typedef int bool;
+
+main()
+{
+	bool	is_prime [MAXLIMIT+1];
+	int	j, k, limit, factor;
+
+	printf ("Type limit for prime numbers (2 to %d): ", MAXLIMIT);
+	scanf ("%d", &limit);
+	for (j = 2;  j <= limit;  j++)
+		is_prime [j] = TRUE;
+
+	factor = 2;        
+	do {
+		if (is_prime [factor])
+			for (k = 2;  k <= limit / factor;  k++)
+				is_prime [k * factor] = FALSE;
+		factor++;
+	} while (factor * factor <= limit);
+
+	printf ("Primes from 2 to %d are:\n", limit);
+	for (j = 2;  j <= limit;  j++)
+		if (is_prime [j])
+			printf ("%d\n", j);
+}                              

@@ -1,0 +1,36 @@
+PROGRAM Sieve (input, output);
+
+{ Example Pascal program:
+  Sieve of Eratosthenes - simple minded implementation }
+
+
+   CONST
+      MaxLimit = 10000;
+
+   TYPE
+      Range    = 2..MaxLimit;
+
+   VAR
+      j, k, factor, limit: Range;
+      isPrime:  ARRAY [range] OF Boolean;
+
+BEGIN
+
+   Write ('Type limit for prime numbers (2 to ', MaxLimit, '): ');
+   Read (limit);
+   FOR j := 2 TO limit DO
+      isPrime [j] := True;
+        
+   factor := 2;
+   REPEAT
+      IF isPrime [factor] THEN
+         FOR k := 2 TO limit DIV factor DO
+            isPrime [k * factor] := False;
+      factor := Succ (factor)
+   UNTIL factor * factor > limit;
+
+   WriteLn ('Primes from 2 to ', limit, ' are:');
+   FOR j := 2 TO limit DO
+      IF isPrime [j] THEN WriteLn (j)
+
+END.

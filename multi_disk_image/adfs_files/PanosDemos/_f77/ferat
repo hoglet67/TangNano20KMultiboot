@@ -1,0 +1,31 @@
+      PROGRAM Sieve
+
+C Example Fortran 77 program:
+C Sieve of Eratosthenes - simple minded implementation
+
+      PARAMETER (MaxLimit = 10000)
+
+      INTEGER  j, k, factor, limit
+      LOGICAL is prime (2 : MaxLimit)
+
+      PRINT *, 'Type limit for prime numbers (2 to ', MaxLimit, '): '
+      READ *, limit
+      DO 10 j = 2, limit
+         is prime (j) = .TRUE.
+10    CONTINUE
+        
+      factor = 2
+20    IF (is prime (factor)) THEN
+         DO 30 k = 2, limit / factor
+            is prime (k * factor) = .FALSE.
+30       CONTINUE
+      ENDIF
+      factor = factor + 1
+      IF (factor**2 .LE. limit) GOTO 20
+
+      PRINT *, 'Primes from 2 to ', limit, ' are:'
+      DO 40 j = 2, limit
+         IF (is prime (j)) PRINT *, j
+40    CONTINUE
+
+      END

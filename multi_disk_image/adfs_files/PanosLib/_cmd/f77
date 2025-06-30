@@ -1,0 +1,18 @@
+$ .Identify Fortran Command file 1.10/03
+$ .key source/e-f77 list/s listfile/1 opt/k[+] aof/k/1 map/s mapfile/k/1
+$ .Help Fortran Compilation
+$ .Help		Keywords
+$ .Help
+$ .Help -Source		Source file
+$ .Help -List		Enable listing
+$ .Help -Listfile	List file (<source>-lst used as default)
+$ .Help -Opt		Compilation options
+$ .Help -Aof		Alternative output file name
+$ .Help -Map		Produce storage map
+$ .Help
+$ .Help For example:
+$ .Help f77 MyProg -list
+$ .Help
+$ .Help see 'f77fe -help' or 'f77cg -help' for more help.
+$ f77fe <source> <list> <listfile> -opt <opt>
+$ f77cg <source> -opt <opt> -aof <aof> <map> <mapfile>

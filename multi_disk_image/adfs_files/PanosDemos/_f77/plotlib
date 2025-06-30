@@ -1,0 +1,135 @@
+C     Simple BBC Graphics Library
+C     Originally due to Richard Evans of Topexpress Ltd.
+C
+      SUBROUTINE setu(unit)
+C                ====
+      REAL    xscale, yscale, xorig, yorig
+      LOGICAL clear
+      INTEGER u, unit
+      COMMON /graphics/ xscale, yscale, xorig, yorig, clear, u
+      u = unit
+      END
+C
+C
+      SUBROUTINE limits(xmin, xmax, ymin, ymax)
+C                ======
+      REAL    xscale, yscale, xorig, yorig
+      LOGICAL clear
+      INTEGER u
+      COMMON /graphics/ xscale, yscale, xorig, yorig, clear, u
+C
+C     xmin*xs+xo =    0      ymin*ys+yo =    0
+C     xmax*xs+xo = 1279      ymax*ys+yo = 1023
+C
+      IF (xmin .EQ. xmax .OR. ymin .EQ. ymax) STOP 'Bad limits'
+C
+      xscale = 1279/(xmax-xmin)
+      yscale = 1023/(ymax-ymin)
+C
+      xorig  = - xmin * xscale
+      yorig  = - ymin * yscale
+      END
+C
+C
+      SUBROUTINE reset
+C                =====
+      REAL    xscale, yscale, xorig, yorig
+      LOGICAL clear
+      INTEGER u
+      COMMON /graphics/ xscale, yscale, xorig, yorig, clear, u
+      clear  = .FALSE.
+      xscale = 1
+      yscale = 1
+      xorig  = 0
+      yorig  = 0
+      END
+C
+C
+      SUBROUTINE plot(k, x, y)
+C                ====
+      REAL    xscale, yscale, xorig, yorig
+      LOGICAL clear
+      INTEGER u
+      COMMON /graphics/ xscale, yscale, xorig, yorig, clear, u
+      ix = nint(x * xscale + xorig)
+      iy = nint(y * yscale + yorig)
+      IF (.NOT. clear)
+     +THEN
+           WRITE(u, 1) char(16)
+           clear = .true.
+      ENDIF  
+      WRITE(u, 1) char(25),
+     +         char(k), char(mod(ix, 256)), char(ix/256),
+     +                  char(mod(iy, 256)), char(iy/256)
+    1 FORMAT('*', 6a)
+      END
+C                    
+C
+      SUBROUTINE draw(x, y)
+C                ====
+      CALL plot(5, x, y)
+      END
+C                    
+C
+      SUBROUTINE move(x, y)
+C                ====
+      CALL plot(4, x, y)
+      END
+C                    
+C
+      SUBROUTINE palete(from, to)
+C                ========
+      INTEGER from, to
+      REAL    xscale, yscale, xorig, yorig
+      LOGICAL clr
+      INTEGER u
+      COMMON /graphics/ xscale, yscale, xorig, yorig, clr, u
+      WRITE (u, '(1h*, a)') char(19), char(from), char(to), char(0),
+     1 char(0), char(0)
+      END
+C                     
+C
+      SUBROUTINE mpolar(r, theta)
+C                ======
+      CALL move(r * cos(theta), r * sin(theta))
+      END
+C                      
+C
+      SUBROUTINE dpolar(r, theta)
+C                ======
+      CALL draw(r * cos(theta), r * sin(theta))
+      END
+C                      
+C
+      SUBROUTINE text(x, y, mess)
+C                ====
+      CHARACTER *(*) mess
+      REAL    xscale, yscale, xorig, yorig
+      LOGICAL clear
+      INTEGER u
+      COMMON /graphics/ xscale, yscale, xorig, yorig, clear, u
+      CALL move(x, y)
+      WRITE (u, 1) mess
+    1 FORMAT ('*', a)
+      END
+C     
+C
+      SUBROUTINE mode(m)
+C                ====
+      INTEGER m
+      INTEGER u
+      COMMON /graphics/ xscale, yscale, xorig, yorig, clear, u
+      WRITE (u,1) char(22), char(m)
+    1 FORMAT ('*', 2a)
+      END
+C
+C    
+      BLOCK DATA grablk
+C                ======
+      REAL    xscale, yscale, xorig, yorig
+      LOGICAL clear
+      INTEGER u
+      COMMON /graphics/ xscale, yscale, xorig, yorig, clear, u
+      DATA xscale, yscale/2*1/, xorig, yorig/2*0/, clear/.false./
+      DATA u/50/
+      END

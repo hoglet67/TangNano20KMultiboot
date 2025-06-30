@@ -1,0 +1,21 @@
+	MODULE	World
+
+; 32000 Assembler - basic confidence test
+
+	IMPORTC	XBlockWrite = 'IO' . 'XBlockWrite'
+
+	ENTRY
+
+	ADDR	msg, TOS
+	ADDR	@msg_len, TOS
+	CXP	XBlockWrite
+
+	MOVQD	0, R0
+	RXP	8
+
+	NLSYM	10		; ASCII standard: newline = 10
+
+msg	DCS	'Hello Assembler world*N'
+msg_len	EQU	$-msg
+
+	END

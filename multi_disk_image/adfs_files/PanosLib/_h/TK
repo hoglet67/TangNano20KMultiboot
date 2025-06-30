@@ -1,0 +1,28 @@
+/* tk.h  version 1.1.0 -- Tiny Kernel SVC numbers */
+
+#define TKWRCH 1
+#define TKSTRI 2
+#define TKASCI 3
+#define TKNEWL 4
+#define TKRDCH 5
+#define TKBYTE 6
+#define TKWORD 7
+#define TKCLI  8
+#define TKFILE 10
+#define TKFIND 11
+#define TKARGS 12
+#define TKBGET 13
+#define TKBPUT 14
+#define TKGBPB 15
+#define TK_EXIT_PROGRAM 17
+#define TK_CALL_DEBUG 18
+#define TKRESC 20
+#define TK_IMMEDIATE_OUT 21
+#define TK_SET_EVENT_HANDLER 30
+#define TKRERR 31
+#define TK_SET_VDT 40
+#define TK_SPLIT 50
+#define TK_COMM 51
+#define TK_GET_VERSION 52
+#define TK_SET_VDU_HANDLER 53
+#define TK_READ_CONFIG_SWITCHS 54

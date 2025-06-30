@@ -1,0 +1,4 @@
+      PROGRAM World
+C     Acorn 32000 Fortran 77 - basic confidence test
+      PRINT *, 'Hello Fortran world'
+      END

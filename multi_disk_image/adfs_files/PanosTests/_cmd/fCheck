@@ -1,0 +1,9 @@
+$ .Identify Fortran installation test v1.10/01
+$ . Checking FORTRAN installation
+$ .set cli$stop -1
+$ .swd $.PanosTests
+$ f77 fworld
+$ link fworld f77
+$ fworld
+$ . 
+$ . FORTRAN installation check completed

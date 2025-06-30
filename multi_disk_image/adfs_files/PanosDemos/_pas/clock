@@ -1,0 +1,394 @@
+program clock(input, output);
+
+{ Tim Hartley 12/7/1985 }
+
+const
+     pi = 3.14159265;
+     size = 370;
+     red     = 1;
+     yellow  = 3;
+     blue    = 4;
+     cyan    = 6;
+
+type
+     string = packed array[1..8] of char;
+     byte = 0..255;
+     str = packed array[1..9] of char;
+
+var
+   current : string;
+   large, small, sweep, tlarge, tsmall, tsweep : real;
+   valid, global, digital, verbose, tic, chime : boolean;
+   tickflag : byte;
+   chcount : integer;
+   list : array[1..20] of str;
+        
+import function time(var value : string; max : integer;
+                     var slen : integer): integer;
+                   
+import function XOSByte(var result2 : integer; var CBit : boolean;
+                       byteno, param1, param2 : byte) : integer;
+
+import procedure mode(m : integer);
+import procedure plot(p, x, y : integer);
+import procedure palette(log, act : integer);
+import procedure gcol(a, b : integer);
+import procedure tab(x, y : integer);
+import procedure defchar(n, a, b, c, d, e, f, g, h : integer);
+import procedure sound(channel, volume, pitch, length : integer);
+import procedure envelope(a,b,c,d,e,f,g,h,i,j,k,l,m,n : integer);
+import procedure cursoroff;
+import procedure raw(c : integer);
+
+procedure return(var tex : string; var valid : boolean);
+
+var
+   res, len : integer;
+
+begin
+      len := 0;
+      res := time(tex, 8, len);
+      valid := (res >= 0) and (len = 8);
+end;
+
+procedure dong;
+
+var
+    channel, value : integer;
+
+begin
+      value := 30;
+      for channel := 1 to 3 do
+      begin
+            sound(channel, 1, value, 5);
+            value := value+30;
+      end;
+      chcount := chcount-1;
+end;
+
+procedure tick;
+
+var
+    dum1, res : integer;
+    bit : boolean;
+
+begin
+       if tic then
+       begin 
+             res := XOSByte(dum1, bit, 137, tickflag, 0);
+             if tickflag=0 then tickflag:=1 else tickflag:=0;
+       end;
+end;
+
+procedure move(x, y : integer);
+
+begin
+      plot(4,x,y);
+end;
+
+procedure circle(x, y, radius, col : integer);
+
+{ Draws and fills a circle, center x,y, radius and colour }
+
+var
+    angle : real;
+
+begin
+      gcol(0,col);
+      move(x,y);
+      angle := 0;
+      repeat
+            move(x,y);
+            plot(85, trunc(x+radius*1.5*sin(angle)),
+                     trunc(y+radius*cos(angle)));
+            angle := angle+pi/30;
+      until angle>(2*pi);
+end;
+
+function convert(pos : integer) : integer;
+
+begin
+     convert := 10*(ord(current[pos])-ord('0'))+
+                   ord(current[pos+1])-ord('0');
+end;
+
+procedure calculate(var first, second, third : real);
+
+begin
+      return(current, valid);   
+      first := convert(1);
+      second := convert(4);
+      third := convert(7);
+      if first>11 then first := first-12;
+      first := (first*pi)/6+(pi*(trunc(second) div 5))/72;
+      second := (second*pi)/30+(pi*(trunc(third) div 15))/120;
+      third := (third*pi)/30;
+end;
+
+procedure thinhand(angle : real);
+
+begin
+      move(640, 524);
+      plot(6, 640+trunc((size*1.5*sin(angle))/1.1),
+              524+trunc((size*cos(angle))/1.1));
+end;
+
+procedure digit;
+
+var
+   count, start : integer;
+
+begin
+      if digital then
+      begin
+            tab(16,1);
+            for start := 224 to 225 do
+            begin
+                  for count := 1 to 8 do
+                    if (count=3)or(count=6) then raw(32)
+                    else raw(2*(ord(current[count])-ord('0'))+start);
+                  tab(16,2);
+            end;
+      end;
+end;
+
+procedure verbal;
+
+var
+   hours, minutes : integer;
+   flag : boolean;
+
+begin
+      if verbose then
+      begin
+            rewrite(output, 'rawvdu:');
+            hours := convert(1) mod 12;
+            minutes := convert(4);
+            if hours = 0 then hours := 12;
+            if minutes>30 then hours := hours+1;
+            if hours=13 then hours := 1;
+            tab(5,30);
+            if minutes in [0, 15, 45, 30] then
+               case minutes of
+                    0  : write('        ',list[hours], ' O''Clock');
+                    15 : write('        Quarter Past ', list[hours]);
+                    30 : write('        Half Past ', list[hours]);
+                    45 : write('        Quarter to ', list[hours]);
+               end
+            else
+            begin
+                  flag := true;
+                  if minutes>30 then
+                  begin
+                        flag := false;
+                        minutes := 60-minutes;
+                  end;
+                  if minutes<21 then write(list[minutes])
+                                else write(list[20],'-',list[minutes-20]);
+                  write(' Minute');
+                  if minutes>1 then write('s');
+                  if flag then write(' Past ')
+                          else write(' To ');
+                  write(list[hours]);
+            end;
+            write('                    ',chr(11));
+      rewrite(output, 'vdu:');
+      end;
+      
+end;
+            
+procedure sweephand(old, new : real);
+
+begin
+      if old<>new then
+      begin
+            tick;
+            thinhand(old);
+            thinhand(new);
+            digit;
+            if chcount>0 then dong;
+            if new=0 then verbal;
+      end;
+end;
+
+procedure hand(angle, stretch : real);
+
+begin
+      move(640,512);
+      move(640+trunc((size*1.5*sin(angle-pi/7))/10),
+           512+trunc((size*cos(angle-pi/7))/10));
+      plot(86,640+trunc((size*1.5*sin(angle+pi/7))/10),
+              512+trunc((size*cos(angle+pi/7))/10));
+      plot(86,640+trunc((size*1.5*sin(angle))/stretch),
+              512+trunc((size*cos(angle))/stretch));
+end;
+
+procedure hourhand(old, new : real);
+
+begin
+      if old<>new then
+      begin
+            hand(old, 2);
+            hand(new, 2);
+            if (small=0)and chime then
+            begin
+                  chcount := convert(1) mod 12;
+                  if chcount=0 then chcount := 12;
+                  dong;
+            end;
+      end;
+end;
+
+procedure minutehand(old, new : real);
+
+begin
+      if old<>new then
+      begin
+            hand(old, 1.1);
+            hand(new, 1.1);
+      end;
+end;
+
+procedure setupface;
+
+var
+   count1, count2 : integer; 
+   angle : real;
+
+begin
+      defchar(224,0,60,60,66,66,66,66,0);
+      defchar(225,0,66,66,66,66,60,60,0);
+      defchar(226,0,0,0,2,2,2,2,0);
+      defchar(227,0,2,2,2,2,0,0,0);
+      defchar(228,0,60,60,2,2,2,2,60);
+      defchar(229,60,64,64,64,64,60,60,0);
+      defchar(230,0,60,60,2,2,2,2,60);
+      defchar(231,60,2,2,2,2,60,60,0);
+      defchar(232,0,0,0,66,66,66,66,60);
+      defchar(233,60,2,2,2,2,0,0,0);
+      defchar(234,0,60,60,64,64,64,64,60);
+      defchar(235,60,2,2,2,2,60,60,0);
+      defchar(236,0,60,60,64,64,64,64,60);
+      defchar(237,60,66,66,66,66,60,60,0);
+      defchar(238,0,60,60,2,2,2,2,0);
+      defchar(239,0,2,2,2,2,0,0,0);
+      defchar(240,0,60,60,66,66,66,66,60);
+      defchar(241,60,66,66,66,66,60,60,0);
+      defchar(242,0,60,60,66,66,66,66,60);
+      defchar(243,60,2,2,2,2,60,60,0);
+      mode(1);
+      defchar(1,0,0,0,0,0,0,0,0);
+      palette(0, blue);
+      palette(1, cyan);
+      palette(2, red);
+      palette(3, yellow);
+      circle(640, 452, size, 1);
+      circle(640, 512, size, 2);
+      angle := pi/6;
+      repeat
+            gcol(0, 2);
+            move(640+trunc(size*1.5*sin(angle)),
+                   452+trunc(size*cos(angle)));
+            plot(5,640+trunc(size*1.5*sin(angle)),
+                   512+trunc(size*cos(angle)));
+            gcol(0, 1);
+            plot(5,640+trunc((size*1.5*sin(angle))/1.08),
+                   512+trunc((size*cos(angle))/1.08));
+            angle := angle+pi/6;
+      until angle > (2*pi);
+      gcol(0, 3);
+      move(640, 512);
+      plot(5, 640, 524);
+      list[1]  := 'One      ';
+      list[2]  := 'Two      ';
+      list[3]  := 'Three    ';
+      list[4]  := 'Four     ';
+      list[5]  := 'Five     ';
+      list[6]  := 'Six      ';
+      list[7]  := 'Seven    ';
+      list[8]  := 'Eight    ';
+      list[9]  := 'Nine     ';
+      list[10] := 'Ten      ';
+      list[11] := 'Eleven   ';
+      list[12] := 'Twelve   ';
+      list[13] := 'Thirteen ';
+      list[14] := 'Fourteen ';
+      list[15] := 'Fifteen  ';
+      list[16] := 'Sixteen  ';
+      list[17] := 'Seventeen';
+      list[18] := 'Eighteen ';
+      list[19] := 'Nineteen ';
+      list[20] := 'Twenty   ';
+      for count1 := 1 to 20 do
+          for count2 := 1 to 9 do
+              if list[count1, count2] = ' ' then
+                     list[count1, count2] := chr(0);
+      calculate(large, small, sweep);
+      thinhand(sweep);
+      hand(large, 2);
+      hand(small, 1.1);
+      verbal;
+end;
+
+procedure mainloop;
+
+begin
+      repeat
+             tlarge := large;
+             tsmall := small;
+             tsweep := sweep;
+             calculate(large, small, sweep);
+             sweephand(tsweep, sweep);
+             hourhand(tlarge, large);
+             minutehand(tsmall, small);
+             digit;
+      until false;
+end; 
+
+procedure options;
+
+var
+   a : char;
+
+begin
+      mode(7);
+      raw(141);
+      writeln('Options ...');
+      raw(141);
+      writeln('Options ...');
+      writeln;
+      write('Digital display (Y/N) :');
+      readln(a);
+      digital := a in ['y','Y'];
+      writeln;
+      write('Verbose display (Y/N) :');
+      readln(a);
+      verbose := a in ['y','Y'];
+      writeln;
+      write('Tick (Y/N) :');
+      readln(a);
+      tic := a in ['y','Y'];
+      writeln;
+      write('Chimes (Y/N) :');
+      readln(a);
+      chime := a in ['y','Y'];
+end;      
+
+begin { Main Program }
+      global := false;
+      tickflag := 0;
+      chcount := 0;
+      return(current, valid);
+      if not valid then
+         writeln('Please set the time before using this program.')
+      else
+      begin
+            options;
+            envelope(1,1,0,0,0,5,5,5,120,0,0,255,126,126);
+            if not global then
+            begin
+                  setupface;
+                  mainloop;
+            end;     
+      end;
+end.

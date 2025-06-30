@@ -1,0 +1,23 @@
+$ .Identify ADFS/NFS Check Version 1.30/02
+$ .Help Checks Panos installation on ADFS/NFS
+$ . Checking Panos installation
+$ .set cli$stop -1
+$ copy -help
+$ configure -help
+$ asm32 -help
+$ access -help
+$ delete -help
+$ set -help
+$ show -help
+$ help
+$ star -help
+$ cat -help
+$ logon -help
+$ logoff -help
+$ create -help
+$ rename -help
+$ edit -help
+$ link -help
+$ .
+$ .
+$ . Panos installation check completed

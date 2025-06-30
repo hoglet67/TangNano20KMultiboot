@@ -1,0 +1,9 @@
+(
+  (Define Init "Editor initialization" ()
+
+    (PopBind 16_94) {Unbind self from f4}
+
+  ) { End Init }
+
+)
+

@@ -1,0 +1,6 @@
+$ .Identify Lisp installation test v1.10/01
+$ . Checking Lisp installation
+$ .set cli$stop -1
+$ vlisp -help
+$ . 
+$ . Lisp installation check completed

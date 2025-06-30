@@ -1,0 +1,6 @@
+$ .key filename
+$ . ExecPas
+$ . sample command file to compile, load and run Pascal programs 
+$ Pascal <filename>
+$ link <filename> pas
+$ <filename>

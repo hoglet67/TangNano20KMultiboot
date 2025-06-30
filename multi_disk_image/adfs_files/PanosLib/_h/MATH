@@ -1,0 +1,34 @@
+/*
+ * MATH.H
+ *
+ * Specs for C-callable mathematical functions
+ *
+ * 1.1.0  28-Sep-84 ADC  (not all of these entries yet in RTL)
+ *
+ */
+
+extern double acos(),
+              asin(),
+              atan(),
+              atan2(),
+              cabs();
+extern int    ceil();
+extern double cos(),
+              cosh(),
+              exp(),
+              fabs();
+extern int    floor();
+extern double frexp(),
+              hypot(),
+              ldexp(),
+              log(),
+              log10(),
+              modf(),
+              pow();
+extern int    rand();
+extern double sin(),
+              sinh(),
+              sqrt();
+extern int    srand();
+extern double tan(),
+              tanh();

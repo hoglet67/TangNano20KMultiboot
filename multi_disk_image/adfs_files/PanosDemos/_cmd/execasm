@@ -1,0 +1,6 @@
+$ .key filename
+$ . Execasm
+$ . sample command file to compile, load and run assembler programs 
+$ asm32 <filename>
+$ link <filename>
+$ <filename>

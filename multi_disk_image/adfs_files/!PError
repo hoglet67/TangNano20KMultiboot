@@ -1,0 +1,206 @@
+~~~~!PError Version 1.40/01 - 3rd July 1986
+~~~~Hardware Errors
+0002Address translation trap (or null procedure called)
+0003Floating point error trap
+0004Illegal instruction trap
+0005Supervisor call trap
+0006Divide by zero trap
+0007Flag trap
+0008Breakpoint trap
+0009Trace trap
+000aUndefined instruction trap
+~~~~Convert Facility Errors
+0100Invalid base for number-string conversion
+0101Invalid number string
+0102Invalid base in string-number conversion
+0103Overflow in string-number conversion
+0104Invalid boolean string
+~~~~Store Facility Errors
+0200Store environment overflow
+~~~~ 0201 spare
+0202Tag overflow
+0203Bad heap tag
+0204Stack and heap overlap
+0205Not enough free store
+0206Request for zero length block
+0207Not an allocated block
+0208Bad address for split block
+0209Failed to allocate module space
+020aOperation not available for module table block
+020bNo space for new environment
+~~~~I/O Facility Errors
+~~~~ 0300 spare
+0301No stream selected
+0302Bad stream number
+0303Bad device name '%'
+0304Bad device data '%'
+0305Illegal operation
+0306Not enough streams
+0307Bad open type
+0308Filing system not found
+0309End of file
+030aPrinter not available
+030bNo default filing system
+030cNo workspace
+030dInvalid filing system
+030eNot implemented
+030fImplementation failure
+0310No buffer space
+0311Printer in use
+0312Tab string too big
+0313Device '%' removed
+0314Duplicate device '%'
+0315Too many devices
+0316Translation of context name in '%' too complex
+0317Escape
+~~~~Loader Facility Errors
+0400Invalid image
+0401Module '%' not found
+0402Code symbol '%' not found
+0403Data symbol '%' not found
+0404Declared name is invalid
+0404Inappropriate file type for Run
+0405Cannot run system image
+0406Cannot run device driver image
+~~~~Random Facility Errors (none) 05xx
+~~~~Time Facility Errors
+0600Time not set
+0601Invalid binary time
+0602Bad time string
+~~~~Exception Facility Errors
+0700No handler installed
+0701Cannot resume program
+0702Exception during exception processing
+0703Exception during event processing
+0704Cannot install condition handler - invalid module
+~~~~Event Facility Errors
+0800Illegal event number
+0801Illegal action
+0802Handler not found
+0803Fatal event: %
+0804Illegal status for event
+0805Illegal address for event counter or flag
+0806Event counter or flag not found
+0807Too many event flags or counters declared
+~~~~Environment Facility Errors
+0900String result buffer too small
+0901Global string '%' not found
+0902Can't set '%' - reserved variable
+0903Global string table is full
+0904Can't delete '%' - reserved variable
+~~~~Control Facility Errors
+0a00No current commands
+0a01Unable to set new command path
+0a02% not found
+0a03No commands path defined
+~~~~ 0a04 spare
+0a05File '%' is not a valid command or program file
+0a06Dynamic Call mechanism is not implemented
+~~~~ 0a07 spare
+0a08Command path string too long
+~~~~Kernel Facility Errors (none)
+~~~~BBC Facility Errors 0Cxx (special)
+~~~~Argument Facility Errors 0Dxx   NB user error (0Exx) => 0Dxx
+0d00Bad information
+0d01Type mismatch
+0d02Index greater than number of arguments
+0d03Bad index parameter
+0d04Keyword '-%' not known
+0d05Missing keyword delimiter
+0d06Missing keyword name
+0d07Word too large
+0d08Missing slash option
+0d09Conflicting type specification
+0d0aBad number in quantity
+0d0bToo large a quantity
+0d0cCannot have quantity zero
+0d0dState can only have quantity one
+0d0eLiteral can only have quantity one
+0d0fDuplicated options
+0d10Missing close square bracket
+0d11Missing character after escape
+0d12Too many defaults
+0d13Missing trailing quote
+0d14No defaults with state keywords
+0d15-Help and -Identify wanted but bad arguments
+0d16No defaults with exact quantity
+0d17Too many arguments for '%'
+0d18Cannot attach '%' to a keyword
+0d19Argument '-%' expects a value
+0d1aArgument '-%' needs a parameter
+0d1bToo few arguments for '-%'
+0d1cBad integer argument %
+0d1dBad cardinal argument %
+0d1e'-%' is not a keyword
+0d1f-Help wanted but bad arguments
+0d20-Identify wanted but bad arguments
+0d21Substitution of <%> not possible
+0d22Missing substitution bracket
+~~~~ 0d23 spare
+0d24Minus substitution only permited for /E keyword
+0d25Abbreviation '-%' is ambiguous
+0d26Missing argument after comma
+0d27/R can only have one argument
+~~~~ 0d28 spare
+0d29File '%' not found
+0d2a'%' does not match any files
+~~~~File Facility Errors  0Fxx
+0f00File '%' is not datestamped
+0f01Bad filing system
+0f02File '%' is a directory
+0f03File '%' not found
+0f04Attempt to rename across filing systems
+0f05Bad information handle
+0f06Not enough workspace
+0f07Bad directory index
+0f08Bad filing system name: %
+0f09Directory '%' not found
+0f0aBad date stamp
+0f0bFile name '%' is illegal
+0f0cNull file name
+0f0dAttempt to rename across drives
+0f0eFile '%' already exists
+0f0fToo many wild paths in '%'
+0f10Mismatch in number of wild path components
+0f11No wild match
+0f12File '%' is too large for buffer
+0f13Bad file name '%'
+0f14Directory '%' already exists
+0f15File '%' is not a directory
+0f16File '%' is already open
+0f17Too many files open
+0f18File '%' is locked
+0f19File '%' is read protected
+0f1aFile '%' is write protected
+0f1bFile '%' not found
+0f1cDirectory '%' is not empty
+0f1dObject '%' is not a file
+0f1ePhysical file name '%' contains a minus
+0f1fIllegal filing operation
+0f20Rename operation includes root directory
+0f21Attempt to rename directory as sub-directory of itself
+0f22Not logged on to %
+0f23'%' is not a valid network ID
+0f24Network error
+0f25Can't rename component of current working directory path
+0f26Can't delete component of current working directory path
+0f27File '%' is not contiguous
+0f28Can't rename '%' as an existing directory
+0f29Null path component in '%'
+~~~~Panos Facility errors 10xx
+1000Panos internal error: %
+1001User string result buffer is too small
+~~~~Command Facility Errors 11xx
+1100File '%' is not a valid command file
+1101Command file contains command line not starting with '$'
+1102Aliassing nested too deeply for command '%'
+1103Missing '~' separator in alias definition for command '%'
+1104Command name too long
+1105'%' is not a known built-in command
+~~~~Error Facility Errors 12xx
+1200Not an error code
+1201No error information available
+~~~~Wild Facility Errors
+1300Too many star fields in wild spec '%'
+1301Inconsistent template '%'
+1302No match for wild spec '%'

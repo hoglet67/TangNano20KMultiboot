@@ -1,0 +1,30 @@
+(GLOBAL '(maxlimit))
+
+(FLAG '(maxlimit) 'CONSTANT)
+
+(SETQ maxlimit 10000)
+
+(DE Sieve ()
+   (LET ((isprime (MKVECT maxlimit))
+         (limit NIL)
+         (factor 2))
+      (PRINC "Type limit for prime numbers (2 to ")
+      (PRINC maxlimit)
+      (PRINC "): ")
+      (SETQ limit (READ))
+      (DO ((j 2 (IADD1 j)))
+         ((IGREATERP j limit) NIL)
+         (PUTV isprime j T))
+      (LOOP
+         (IF (GETV isprime factor)
+            (DO ((k 2 (IADD1 k))) 
+               ((IGREATERP k (IQUOTIENT limit factor)) NIL)
+               (PUTV isprime (ITIMES k factor) NIL)))
+         (SETQ factor (IADD1 factor))
+         (UNTIL (IGREATERP (ITIMES factor factor) limit)))
+      (PRINC "Primes from 2 to ")
+      (PRINC limit)
+      (PRINTC " are:")
+      (DO ((j 2 (IADD1 j)))
+         ((IGREATERP j limit) NIL)
+         (IF (GETV isprime j) (PRINT j}

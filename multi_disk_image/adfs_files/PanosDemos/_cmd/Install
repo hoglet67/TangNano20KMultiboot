@@ -1,0 +1,23 @@
+$ .Identify ADFS/NFS Panos Welcome Installation Version 1.40
+$ .Key Dev[ADFS]
+$ .Help Install Welcome disc onto ADFS/NFS
+$ .Help
+$ .Help                 KEYWORDS
+$ .Help
+$ .Help -Dev            Either NFS or ADFS (default is ADFS)
+$ .Help -Force          Overwrite existing files
+$ .Help -Abandon        Stop on first error
+$ .Set Program$Force    False
+$ .Set Program$Abandon  True
+$ .Set Program$Confirm  False
+$ .Set Program$Identify False
+$ Create <Dev>:$.PanosDemos -Dir -NoAbandon
+$ .swd <Dev>:$.PanosDemos
+$ Copy dfs::0.*, dfs::2.* <Dev>:@ -attr rw/r <Force> <Abandon>
+$ .delete Program$Force
+$ .delete Program$Abandon
+$ .delete Program$Confirm
+$ .delete Program$Identify
+$ .
+$ . Welcome programs now installed on <Dev>
+$ . Type WELCOME to run them

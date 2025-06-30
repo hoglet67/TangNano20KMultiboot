@@ -1,0 +1,261 @@
+Module glib;
+
+{ Pascal graphics and utility library
+
+  Tim Hartley  4th September 1985 }
+
+type
+     string = packed array[1..7] of char;
+     byte = 0..255;
+     param = packed array[1..14] of byte;
+
+static
+       stream : integer;
+static
+       initialised : boolean := false;
+
+import function FindOutput(dest : string; size : integer) : integer;
+
+import function SwriteByte(dest, val : integer) : integer;
+
+import function OSWord(fud : integer; var back : param) : integer;
+
+import function XOSbyte(var res1 : integer; var bit : boolean;
+                        a, x, y : integer) : integer;
+
+procedure setup;
+
+begin
+      stream := FindOutput('Rawvdu:', 7);
+      initialised := true;
+end;
+
+export procedure raw(val : integer);
+
+var
+    res : integer;
+
+begin
+      if not initialised then setup;
+      res := SwriteByte(stream, val mod 256);
+end;
+
+export procedure raw2(val1, val2 : integer);
+
+var
+    res : integer;
+
+begin
+      if not initialised then setup;
+      res := SwriteByte(stream, val1 mod 256);
+      res := SwriteByte(stream, val2 mod 256);
+end;
+
+procedure two(val : integer);
+
+begin
+      if val<0 then val := 65536+val;
+      raw2(val mod 256, val div 256);
+end;
+
+export procedure mode(val : integer);
+
+begin
+      raw2(22, val);
+end;
+
+export procedure plot(first, second, third : integer);
+
+begin
+      raw2(25, first);
+      two(second);
+      two(third);
+end;
+
+export procedure palette(logical, actual : integer);
+
+begin
+      raw2(19, logical);
+      raw2(actual, 0);
+      two(0);
+end;
+
+export procedure window(leftx, bottomy, rightx, topy : integer);
+
+begin
+      raw(28);
+      raw2(leftx, bottomy);
+      raw2(rightx, topy);
+end;
+
+export procedure graphwin(leftx, bottomy, rightx, topy : integer);
+
+begin
+      raw(24);
+      two(leftx);
+      two(bottomy);
+      two(rightx);
+      two(topy);
+end;
+
+export procedure cls;
+
+begin
+      raw(12);
+end;
+
+export procedure clg;
+
+begin
+      raw(16);
+end;
+
+export procedure colour(val : integer);
+
+begin
+      raw2(17, val);
+end;
+
+export procedure gcol(val1, val2 : integer);
+
+begin
+      raw(18);
+      raw2(val1, val2);
+end;
+
+export procedure tab(x, y : integer);
+
+begin
+      raw(31);
+      raw2(x, y);
+end;
+
+export procedure defchar(cnum, a, b, c, d, e, f, g, h : integer);
+
+begin
+      raw2(23, cnum);
+      raw2(a, b);
+      raw2(c, d);
+      raw2(e, f);
+      raw2(g, h);
+end;
+
+export procedure cursoron;
+
+begin
+      defchar(1,1,0,0,0,0,0,0,0);
+end;
+
+export procedure cursoroff;
+
+begin
+      defchar(1,0,0,0,0,0,0,0,0);
+end;
+
+export procedure origin(x, y : integer);
+
+begin
+      raw(29);
+      two(x);
+      two(y);
+end;
+
+export function inkey(parm : integer) : integer;
+
+var
+    res, a : integer;
+    b : boolean;
+
+begin
+      if parm<0 then parm := parm+65536;
+      res := XOSbyte(a, b, 129, parm mod 256, parm div 256);
+      if b then inkey := -1
+           else inkey := res mod 256;
+end;
+
+export procedure sound(channel, volume, pitch, length : integer);
+
+var
+    this : param;
+    res : integer;
+
+procedure fill(act, off : integer);
+
+begin
+      if act<0 then act := act+65536;
+      this[off] := act mod 256;
+      this[off+1] := act div 256;
+end;
+
+begin
+      fill(channel, 1);
+      fill(volume, 3);
+      fill(pitch, 5);
+      fill(length, 7);
+      res := OSword(7, this);
+end;
+      
+export procedure envelope(a,b,c,d,e,f,g,h,i,j,k,l,m,n : integer);
+
+var
+    this : param;
+    res, off : integer;
+
+procedure fi(act : integer);
+
+begin
+      if act<0 then act := act+256;
+      this[off] := act mod 256;
+      off := off+1;
+end;
+
+begin
+      off := 1;
+      fi(a);
+      fi(b);
+      fi(c);
+      fi(d);
+      fi(e);
+      fi(f);
+      fi(g);
+      fi(h);
+      fi(i);
+      fi(j);
+      fi(k);
+      fi(l);
+      fi(m);
+      fi(n);
+      res := OSword(8, this);
+end;
+
+export function point(x, y : integer) : integer;
+
+var
+    this : param;
+    res : integer;
+
+begin
+      if x<0 then x := x+65536;
+      if y<0 then y := y+65536;
+      this[1] := x mod 256;
+      this[2] := x div 256;
+      this[3] := y mod 256;
+      this[4] := y div 256;
+      res := OSword(9, this);
+      point := this[5];
+end;
+
+export function adval(parm : integer) : integer;
+
+var
+    res, a, temp : integer;
+    b : boolean;
+
+begin
+      if parm<0 then parm := parm+256;
+      res := XOSbyte(a, b, 128, parm, 0);
+      temp := res+256*a;
+      adval := temp;
+end;
+
+end.

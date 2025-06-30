@@ -1,0 +1,33 @@
+heading 1 "Panos Welcome Package"
+items 5
+option 1 heading 2 "Pascal"
+option 2 heading 3 "Fortran"
+option 3 heading 4 "C"
+option 4 heading 5 "Assembler"
+option 5 file "slide" "Slide show"
+
+heading 2 "Pascal Welcome Programs"
+items 5
+option 1 file "perat" "Sieve of Eratosthenes"
+option 2 file "typit -tfile perat-pas" "List Sieve program"
+option 3 file "clock" "Clock"
+option 4 file "typit -tfile clock-pas" "List Clock program"
+option 5 file "typit -tfile glib-pas" "List graphics library"
+
+heading 3 "Fortran 77 Welcome Programs"
+items 5
+option 1 file "ferat" "Sieve of Eratosthenes"
+option 2 file "typit -tfile ferat-f77" "List Sieve program"
+option 3 file "fourier" "Fourier series"
+option 4 file "typit -tfile fourier-f77" "List Fourier program"
+option 5 file "typit -tfile plotlib-f77" "List graphics library"
+
+heading 4 "C Welcome Programs"
+items 2
+option 1 file "cerat" "Sieve of Eratosthenes"
+option 2 file "typit -tfile cerat-c" "List Sieve program"
+
+heading 5 "Assembler Welcome Programs"
+items 2
+option 1 file "aerat" "Sieve of Eratosthenes"
+option 2 file "typit -tfile aerat-asm" "List Sieve program"

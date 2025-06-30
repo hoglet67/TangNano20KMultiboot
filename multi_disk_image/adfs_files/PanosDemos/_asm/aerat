@@ -1,0 +1,234 @@
+	MODULE	Sieve
+
+; Example Assembler program:
+; Sieve of Eratosthenes - simple minded implementation
+
+
+MaxLimit	EQU	10000
+
+	AREADEF	Code, [read,code,pic], byte
+	AREADEF	Data, [write,data], double
+
+;
+; specify external (Panos) procedures to be used
+;
+
+	IMPORTC	XBlockWrite = 'IO' . 'XBlockWrite'
+	IMPORTC	XReadByte  = 'IO' . 'XReadByte'
+	IMPORTC	XWriteByte = 'IO' . 'XWriteByte'
+	IMPORTC	XFlushOutput = 'IO' . 'XFlushOutput'
+	IMPORTC	XStringToInteger = 'Convert' . 'XStringToInteger'
+
+;
+; various useful constants
+;
+
+TabChar		EQU	9	; ASCII TAB code
+
+;
+; Define newline symbol (*N) in strings to be Panos standard (10)
+;
+
+NewLineChar	EQU	10
+		NLSYM	NewLineChar
+
+;
+; define the data
+;
+
+; store the array as a bit array in the static area
+
+	AREA	Data
+	DEFSB	$			; for x(SB) reference to vars
+limit	ALLOCD	1
+j	ALLOCD	1
+isPrime	ALLOCB	((1+MaxLimit)+7) / 8	; implement bit array
+
+
+; define the code
+
+	AREA	Code
+
+	ENTRY			; program starts here
+
+; put out prompt for data
+
+	ADDR	Msg1a+1, TOS	; address of data to output
+	MOVZBD	Msg1a, TOS	; length of data
+	CXP	XBlockWrite	; print it
+	MOVD	=MaxLimit, R0	; get integer to print
+	BSR	WriteInt	; output it
+	ADDR	Msg1b+1, TOS	; address of message part 2
+	MOVZBD	Msg1b, TOS	; and length
+	CXP	XBlockWrite	; output it
+	CXP	XFlushOutput	; ensure it goes out before the read is done
+
+; get the number and store it
+
+	BSR	ReadInt		; call subroutine to get it
+	MOVD	R0, limit
+
+; initialise the array
+
+k	EQUR	R1		; use register variable for speed
+
+	MOVQD	2, k		; loop count
+set_loop
+	SBITD	k, isPrime	; set each bit (1=true, 0=false)
+	ADDQD	1, k
+	CMPD	k, limit	; done?
+	BLE	set_loop	; loop until so
+
+factor	EQUR	R2		; in register for speed
+lim	EQUR	R3		; and again (inner loop limit reg)
+tmp	EQUR	R4		; temp for calculations
+
+	MOVQD	2, factor
+check_loop
+	TBITD	factor, isPrime
+	BFC	next
+	MOVQD	2, k
+	MOVD	limit, lim
+	DIVD	factor, lim
+clear_loop
+	CMPD	k, lim
+	BGT	clear_loop_done
+	MOVD	factor, tmp	; calculate factor * k
+	MULD	k, tmp
+	CBITD	tmp, isPrime	; clear the bit
+	ADDQD	1, k		; round again until done
+	BR	clear_loop
+clear_loop_done
+
+next	ADDQD	1, factor	; next value of factor
+	MOVD	factor, tmp
+	MULD	tmp, tmp
+	CMPD	tmp, limit
+	BLE	check_loop
+
+; output message
+
+	ADDR	Msg2a+1, TOS
+	MOVZBD	Msg2a, TOS
+	CXP	XBlockWrite
+	MOVD	limit, R0
+	BSR	WriteInt
+	ADDR	Msg2b+1, TOS	
+	MOVZBD	Msg2b, TOS
+	CXP	XBlockWrite
+	
+; final loop
+
+	MOVQD	2, j
+print_loop
+	TBITD	j, isPrime
+	BFC	next_p
+	MOVD	j, R0			; pass param to WriteInt in reg.
+	BSR	WriteInt
+        ADDR	@NewLineChar, TOS	; WriteByte (NewLineChar)
+	CXP	XWriteByte
+next_p	ADDQD	1, j
+	CMPD	j, limit
+	BLE	print_loop
+
+; All done.
+; Set success status result and return removing (unused) parameters
+
+	MOVQD	0, R0
+	RXP	8	
+	
+Msg1a	DCS 	"Type limit for prime numbers (2 to "
+Msg1b	DCS	"): "
+Msg2a	DCS	"Primes from 2 to "
+Msg2b	DCS	" are:*N"
+
+; subroutines
+
+;
+; ReadInt
+;
+; Simple-minded routine to read an integer from the input stream.
+;
+; Leading white space (space/tab/newline) is ignored.  Everything
+; from then on up to a space, tab or newline is buffered (maximum
+; 20 chars, rest is ignored) and passed to the Panos routine
+; XStringToInteger for conversion.  If the number is invalid then
+; this will signal an error and the program will crash.
+;
+buff_size	EQU	20
+index		EQU	-4		; offset of index in frame
+buffer		EQU	-4-buff_size	; offset of buffer in frame
+frame_size	EQU	4 + buff_size
+
+ReadInt
+
+	ENTER	[], frame_size	; reserve space for index & buffer
+
+skip_blanks
+	CXP	XReadByte
+	CMPB	R0, =' '
+	BEQ	skip_blanks
+	CMPB	R0, =TabChar
+	BEQ	skip_blanks
+	CMPB	R0, =NewLineChar
+	BEQ	skip_blanks
+
+; initialise buffer index variable
+
+	MOVQD	0, index(FP)		; no bytes in buffer yet
+
+read_stuff
+	
+; insert the character, if there is any space
+
+	MOVD	index(FP), R1		; pick up buffer index
+	CMPD	R1, =buff_size		; full?
+	BEQ	next_char		; skip if so
+	MOVB	R0, buffer(FP)[R1:B]	; store char
+	ADDR	1(R1), index(FP)	; save incremented index
+
+next_char
+	CXP	XReadByte
+	CMPB	R0, =NewLineChar	; at end of line yet?
+	BEQ	read_done
+	CMPB	R0, =' '		; hit a blank? (-> terminate)
+	BEQ	read_done
+	CMPB	R0, =TabChar		; or a tab?
+	BNE	read_stuff
+
+read_done
+
+; now call XStringToInteger to convert data
+
+	MOVD	index(FP), TOS		; length of buffer
+	ADDR	buffer(FP), TOS		; address of buffer
+ 	CXP	XStringToInteger	; call conversion function
+
+; The conversion must have succeeded if we reach here.	
+; Remove stack frame and return (result is left in R0).
+
+	EXIT	[]
+	RET	0
+	
+;
+; WriteInt
+;
+; Print an integer on the output stream.  Done by
+; a simple recursive algorithm (which doesn't work for
+; negative numbers, but param here will be positive..)
+;
+WriteInt
+
+	CMPD	R0, =9		; check size of number
+	BLE	one_digit	; jump if only one digit to print
+	MOVD	R0, TOS		; save original number
+	QUOD	=10, R0		; divide by 10
+	BSR	WriteInt	; print higher digit(s) first
+	MOVD	TOS, R0		; restore original
+one_digit
+	REMD	=10, R0		; get single digit's worth
+	ADDR	'0'(R0), TOS	; convert to character and push
+	CXP	XWriteByte	; print digit
+	RET	0		; all done
+	
+	END
