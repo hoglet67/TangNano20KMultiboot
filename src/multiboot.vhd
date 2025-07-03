@@ -27,33 +27,33 @@ architecture rtl of multiboot is
     signal btn3_clean_last      : std_logic := '1';
     signal debounce_counter     : unsigned(19 downto 0) := (others => '0'); -- ~10ms @ 48MHz
 begin
-        process(clock)
-        begin
-            if rising_edge(clock) then
-                if btn3 = '1' and btn3_last = '0' then
-                    btn3_clean <= '1';
-                elsif btn3 = '0' and btn3_clean = '1' then
-                    -- only debounce the button being released
-                    debounce_counter <= debounce_counter + "1";
-                    if debounce_counter(debounce_counter'high) = '1' then
-                        btn3_clean <= btn3;
-                    end if;
-                else
-                    debounce_counter <= (others => '0');
+    process(clock)
+    begin
+        if rising_edge(clock) then
+            if btn3 = '1' and btn3_last = '0' then
+                btn3_clean <= '1';
+            elsif btn3 = '0' and btn3_clean = '1' then
+                -- only debounce the button being released
+                debounce_counter <= debounce_counter + "1";
+                if debounce_counter(debounce_counter'high) = '1' then
+                    btn3_clean <= btn3;
                 end if;
-                -- wait until the end of the power up reset period to ensure the jumpers are stable
-                if btn3 = '0' and powerup_reset_n_last = '0' and powerup_reset_n = '1' and CORE_ID >= 0 and unsigned(jumper(1 downto 0) xor "11") /= to_unsigned(CORE_ID, 2) then
-                    reconfig_r <= '1';
-                end if;
-                -- manually reconfigure when btn3 is depressed
-                if btn3_clean = '1' and btn3_clean_last = '0' then
-                    reconfig_r <= '1';
-                end if;
-                btn3_last <= btn3;
-                btn3_clean_last <= btn3_clean;
-                powerup_reset_n_last <= powerup_reset_n;
+            else
+                debounce_counter <= (others => '0');
             end if;
-        end process;
+            -- wait until the end of the power up reset period to ensure the jumpers are stable
+            if btn3 = '0' and powerup_reset_n_last = '0' and powerup_reset_n = '1' and CORE_ID >= 0 and unsigned(jumper(1 downto 0) xor "11") /= to_unsigned(CORE_ID, 2) then
+                reconfig_r <= '1';
+            end if;
+            -- manually reconfigure when btn3 is depressed
+            if btn3_clean = '1' and btn3_clean_last = '0' then
+                reconfig_r <= '1';
+            end if;
+            btn3_last <= btn3;
+            btn3_clean_last <= btn3_clean;
+            powerup_reset_n_last <= powerup_reset_n;
+        end if;
+    end process;
 
     reconfig <= reconfig_r;
     led <=  (others => '1') when CORE_ID < 0 else (CORE_ID => '0', others => '1');
