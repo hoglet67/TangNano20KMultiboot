@@ -15,6 +15,7 @@ entity multiboot is
         btn3            : in  std_logic;
         jumper          : in  std_logic_vector(5 downto 0);
         led             : out std_logic_vector(5 downto 0);
+        pa_en_dout      : out std_logic;
         reconfig        : out std_logic := '0'
     );
 end entity;
@@ -26,6 +27,7 @@ architecture rtl of multiboot is
     signal btn3_clean           : std_logic := '1';
     signal btn3_clean_last      : std_logic := '1';
     signal debounce_counter     : unsigned(19 downto 0) := (others => '0'); -- ~10ms @ 48MHz
+    signal pa_en_dout_r         : std_logic := '1';
 begin
     process(clock)
     begin
@@ -57,5 +59,6 @@ begin
 
     reconfig <= reconfig_r;
     led <=  (others => '1') when CORE_ID < 0 else (CORE_ID => '0', others => '1');
+    pa_en_dout <= powerup_reset_n;
 
 end architecture;
