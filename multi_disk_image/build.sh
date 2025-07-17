@@ -21,8 +21,8 @@
 #    beeb from https://github.com/sweharris/MMB_Utils
 #    afscp/scsi2ide from https://github.com/SteveFosdick/AcornFsUtils
 
-ASA_ZIP=AtomSoftwareArchive_20240505_1129_V13.00.zip
-ASA_URL=https://github.com/hoglet67/AtomSoftwareArchive/releases/download/V13_00/${ASA_ZIP}
+ASA_ZIP=AtomSoftwareArchive_20250717_1734_V13.01.zip
+ASA_URL=https://github.com/hoglet67/AtomSoftwareArchive/releases/download/V13_01/${ASA_ZIP}
 
 ELK_MMB_ZIP=elkbig.zip
 ELK_MMB_URL=http://ramtop-retro.uk/files/${ELK_MMB_ZIP}
