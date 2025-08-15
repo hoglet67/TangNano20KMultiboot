@@ -62,6 +62,18 @@ unzip -q -o ${BEEB_MMB_ZIP}
 wget -N --quiet ${BLANK_ADFS_URL}
 
 ##################################################################
+# Add local disk images from 400 onwards
+##################################################################
+
+id=400
+for ssd in ../electron_ssds/*.ssd
+do
+    echo Adding $ssd to ${id}
+    beeb dput_ssd -f ELK.MMB ${id} ${ssd}
+    id=$((${id}+1))
+done
+
+##################################################################
 # Make partion 1 - 800MB FAT32
 ##################################################################
 
