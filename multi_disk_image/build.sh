@@ -66,7 +66,7 @@ wget -N --quiet ${BLANK_ADFS_URL}
 ##################################################################
 
 id=400
-for ssd in ../electron_ssds/*.ssd
+for ssd in `find ../electron_ssds -name '*.ssd' | sort`
 do
     echo Adding $ssd to ${id}
     beeb dput_ssd -f ELK.MMB ${id} ${ssd}
