@@ -211,10 +211,10 @@ cd BeebFpga/roms
 cp tmp/tang_image_combined_MMFS.bin ${root}/${build}/rom_image_beeb.bin
 cd ${root}
 
-# 256KB
+# 128KB
 cd AtomFpga/roms
 ./make_ramrom_tang_image.sh >> ${root}/${build}/roms.log
-cp 16K_avr.bin ${root}/${build}/rom_image_atom.bin
+cp 128K_avr.bin ${root}/${build}/rom_image_atom.bin
 cd ${root}
 
 # 256KB
@@ -268,17 +268,16 @@ else
     echo "Flavour ${flavour}: Build succeeded - compiling multiboot image"
 
     cd ${build}
-    truncate -s 64K  pad1
-    truncate -s 176K pad2
-    truncate -s 1M   pad3
+    truncate -s 128K pad1
+    truncate -s 1M   pad2
 
     cat 0.bin 1.bin 2.bin 3.bin \
         > multiboot_cores.bin
 
-    cat rom_image_beeb.bin pad1 rom_image_atom.bin pad2 rom_image_electron.bin \
+    cat rom_image_beeb.bin rom_image_atom.bin pad1 rom_image_electron.bin \
         > multiboot_roms.bin
 
-    cat multiboot_cores.bin pad3 multiboot_roms.bin \
+    cat multiboot_cores.bin pad2 multiboot_roms.bin \
         > multiboot_cores_and_roms.bin
 
     rm -f pad1 pad2 pad3
