@@ -62,7 +62,7 @@ unzip -q -o ${BEEB_MMB_ZIP}
 wget -N --quiet ${BLANK_ADFS_URL}
 
 ##################################################################
-# Add local disk images from 400 onwards
+# Add local Elk disk images from 400 onwards
 ##################################################################
 
 id=400
@@ -70,6 +70,18 @@ for ssd in `find ../electron_ssds -name '*.ssd' | sort`
 do
     echo Adding $ssd to ${id}
     beeb dput_ssd -f ELK.MMB ${id} ${ssd}
+    id=$((${id}+1))
+done
+
+##################################################################
+# Add local Beeb disk images from 450 onwards
+##################################################################
+
+id=450
+for ssd in `find ../beeb_ssds -name '*.ssd' | sort`
+do
+    echo Adding $ssd to ${id}
+    beeb dput_ssd -f BEEB.MMB ${id} ${ssd}
     id=$((${id}+1))
 done
 
